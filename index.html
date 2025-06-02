@@ -9,13 +9,13 @@
     <style>
         body {
             background-color: #f8f9fa;
-            padding: 20px;
+            padding: 15px;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             color: #333;
         }
         .header {
-            padding: 15px 0;
-            margin-bottom: 20px;
+            padding: 10px 0;
+            margin-bottom: 15px;
             text-align: center;
         }
         .compact-container {
@@ -32,34 +32,36 @@
         .controls-container {
             display: flex;
             justify-content: flex-start;
-            gap: 20px;
+            gap: 15px;
             margin-bottom: 8px;
             align-items: center;
-            padding: 8px 12px;
+            padding: 8px 10px;
             border: 1px solid #e0e0e0;
             border-radius: 4px;
             background: #f9f9f9;
+            flex-wrap: wrap;
         }
         .control-group {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
         .control-label {
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             color: #555;
             font-weight: 500;
-            min-width: 50px;
+            min-width: 45px;
         }
         .table-scroll {
             overflow-x: auto;
             max-height: 500px;
         }
         .table {
-            font-size: 0.80rem;
+            font-size: 0.78rem;
             margin-bottom: 0;
             color: #333;
             border-collapse: collapse;
+            width: 100%;
         }
         .table th {
             background-color: #fff;
@@ -68,7 +70,7 @@
             top: 0;
             vertical-align: middle;
             text-align: center;
-            padding: 6px 8px;
+            padding: 5px 6px;
             font-weight: 600;
         }
         .table th:first-child {
@@ -82,13 +84,13 @@
             background-color: #fff;
             z-index: 2;
             font-weight: 500;
-            padding: 5px 10px;
+            padding: 4px 8px;
         }
         .table td {
             text-align: center;
             vertical-align: middle;
-            min-width: 70px;
-            padding: 5px 8px;
+            min-width: 65px;
+            padding: 4px 6px;
             transition: background-color 0.15s;
         }
         .table td:hover {
@@ -99,13 +101,13 @@
             font-weight: 600;
         }
         .btn-scroll {
-            width: 28px;
-            height: 28px;
+            width: 26px;
+            height: 26px;
             border-radius: 4px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             background: #fff;
             color: #555;
             border: 1px solid #ddd;
@@ -121,16 +123,18 @@
         .step-controls {
             display: flex;
             justify-content: center;
-            gap: 12px;
-            margin-top: 20px;
+            gap: 10px;
+            margin-top: 15px;
             flex-wrap: wrap;
         }
         .step-panel {
             background: #fff;
-            padding: 12px 15px;
+            padding: 10px 12px;
             border-radius: 4px;
-            min-width: 200px;
+            min-width: 180px;
             border: 1px solid #e0e0e0;
+            flex: 1;
+            max-width: 300px;
         }
         .step-title {
             text-align: center;
@@ -139,16 +143,24 @@
             color: #333;
             font-size: 0.85rem;
         }
-        .step-slider {
-            width: 100%;
-            margin: 8px 0;
-            height: 4px;
+        .step-input-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
-        .step-value {
-            text-align: center;
-            font-weight: 500;
+        .step-label {
+            font-size: 0.82rem;
             color: #555;
-            font-size: 0.8rem;
+            min-width: 60px;
+        }
+        .step-input {
+            flex: 1;
+            padding: 5px 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 0.85rem;
+            max-width: 100px;
         }
         .btn-reset {
             margin-top: 8px;
@@ -165,44 +177,72 @@
             background: #f5f5f5;
             border-color: #ccc;
         }
-        .current-cell-info {
-            background: #f9f9f9;
-            color: #555;
-            padding: 8px;
-            border-radius: 4px;
-            margin-top: 10px;
-            font-size: 0.75rem;
-            text-align: center;
-            font-weight: 500;
-        }
         .divider {
             width: 1px;
-            height: 30px;
+            height: 26px;
             background: #e0e0e0;
-            margin: 0 10px;
+            margin: 0 8px;
         }
         .table-header {
             font-weight: 600;
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             margin-bottom: 5px;
             color: #333;
         }
         .table-subheader {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: #666;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
         }
         .formula-display {
-            margin-top: 15px;
+            margin-top: 12px;
             text-align: center;
             padding: 10px;
             background: #f9f9f9;
             border-radius: 4px;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
         .formula-value {
             font-weight: 600;
             color: #333;
+        }
+        .step-button {
+            padding: 5px 10px;
+            font-size: 0.8rem;
+            margin-top: 8px;
+        }
+        @media (max-width: 576px) {
+            .controls-container {
+                gap: 10px;
+                padding: 6px 8px;
+            }
+            .control-group {
+                gap: 4px;
+            }
+            .control-label {
+                min-width: 40px;
+                font-size: 0.78rem;
+            }
+            .btn-scroll {
+                width: 24px;
+                height: 24px;
+                font-size: 0.7rem;
+            }
+            .step-panel {
+                padding: 8px 10px;
+                min-width: 100%;
+            }
+            .step-input-group {
+                gap: 6px;
+            }
+            .step-input {
+                padding: 4px 6px;
+                font-size: 0.82rem;
+                max-width: 80px;
+            }
+            .step-title {
+                font-size: 0.82rem;
+            }
         }
     </style>
 </head>
@@ -264,26 +304,20 @@
 
         <div class="step-controls">
             <div class="step-panel">
-                <div class="step-title">Шаг для рубля</div>
-                <input type="range" id="rub-step-slider" class="step-slider" min="0.1" max="5" step="0.1" value="0.5">
-                <div class="step-value"><span id="rub-step-value">0.5</span> рубля</div>
-                <div class="btn-group d-flex mt-2">
-                    <button class="btn btn-sm btn-outline-secondary py-0" data-step="rub" data-value="0.1">0.1</button>
-                    <button class="btn btn-sm btn-outline-secondary py-0" data-step="rub" data-value="0.5">0.5</button>
-                    <button class="btn btn-sm btn-outline-secondary py-0" data-step="rub" data-value="1">1</button>
-                    <button class="btn btn-sm btn-outline-secondary py-0" data-step="rub" data-value="5">5</button>
+                <div class="step-title">Настройка шага</div>
+                <div class="step-input-group">
+                    <div class="step-label">Рубля:</div>
+                    <input type="number" id="rub-step-input" class="step-input" min="0.1" max="5" step="0.1" value="0.5">
+                    <button id="apply-rub-step" class="btn btn-sm btn-outline-secondary step-button">
+                        Применить
+                    </button>
                 </div>
-            </div>
-            
-            <div class="step-panel">
-                <div class="step-title">Шаг для песо</div>
-                <input type="range" id="ars-step-slider" class="step-slider" min="1" max="50" step="1" value="5">
-                <div class="step-value"><span id="ars-step-value">5</span> песо</div>
-                <div class="btn-group d-flex mt-2">
-                    <button class="btn btn-sm btn-outline-secondary py-0" data-step="ars" data-value="1">1</button>
-                    <button class="btn btn-sm btn-outline-secondary py-0" data-step="ars" data-value="5">5</button>
-                    <button class="btn btn-sm btn-outline-secondary py-0" data-step="ars" data-value="10">10</button>
-                    <button class="btn btn-sm btn-outline-secondary py-0" data-step="ars" data-value="50">50</button>
+                <div class="step-input-group mt-2">
+                    <div class="step-label">Песо:</div>
+                    <input type="number" id="ars-step-input" class="step-input" min="1" max="50" step="1" value="5">
+                    <button id="apply-ars-step" class="btn btn-sm btn-outline-secondary step-button">
+                        Применить
+                    </button>
                 </div>
             </div>
             
@@ -319,15 +353,13 @@
         function initTable() {
             renderTable();
             updateFormula();
-            updateStepDisplays();
+            updateStepInputs();
         }
         
-        // Обновление отображения шагов
-        function updateStepDisplays() {
-            document.getElementById('rub-step-value').textContent = rubStep;
-            document.getElementById('ars-step-value').textContent = arsStep;
-            document.getElementById('rub-step-slider').value = rubStep;
-            document.getElementById('ars-step-slider').value = arsStep;
+        // Обновление полей ввода шагов
+        function updateStepInputs() {
+            document.getElementById('rub-step-input').value = rubStep;
+            document.getElementById('ars-step-input').value = arsStep;
         }
         
         // Обновление формулы расчета
@@ -429,43 +461,26 @@
             renderTable();
         });
         
-        // Обработчики изменения шага рубля
-        document.getElementById('rub-step-slider').addEventListener('input', (e) => {
-            rubStep = parseFloat(e.target.value);
-            document.getElementById('rub-step-value').textContent = rubStep.toFixed(1);
-        });
-        
-        document.getElementById('rub-step-slider').addEventListener('change', () => {
-            renderTable();
-        });
-        
-        // Обработчики изменения шага песо
-        document.getElementById('ars-step-slider').addEventListener('input', (e) => {
-            arsStep = parseInt(e.target.value);
-            document.getElementById('ars-step-value').textContent = arsStep;
-        });
-        
-        document.getElementById('ars-step-slider').addEventListener('change', () => {
-            renderTable();
-        });
-        
-        // Обработчики кнопок быстрого выбора шага
-        document.querySelectorAll('[data-step]').forEach(button => {
-            button.addEventListener('click', (e) => {
-                const target = e.target.dataset.step;
-                const value = parseFloat(e.target.dataset.value);
-                
-                if (target === 'rub') {
-                    rubStep = value;
-                    document.getElementById('rub-step-slider').value = value;
-                } else {
-                    arsStep = value;
-                    document.getElementById('ars-step-slider').value = value;
-                }
-                
-                updateStepDisplays();
+        // Применение шага для рубля
+        document.getElementById('apply-rub-step').addEventListener('click', () => {
+            const newStep = parseFloat(document.getElementById('rub-step-input').value);
+            if (!isNaN(newStep) && newStep >= 0.1 && newStep <= 5) {
+                rubStep = newStep;
                 renderTable();
-            });
+            } else {
+                alert("Пожалуйста, введите корректное значение шага для рубля (от 0.1 до 5)");
+            }
+        });
+        
+        // Применение шага для песо
+        document.getElementById('apply-ars-step').addEventListener('click', () => {
+            const newStep = parseInt(document.getElementById('ars-step-input').value);
+            if (!isNaN(newStep) && newStep >= 1 && newStep <= 50) {
+                arsStep = newStep;
+                renderTable();
+            } else {
+                alert("Пожалуйста, введите корректное значение шага для песо (от 1 до 50)");
+            }
         });
         
         // Обработчик сброса
