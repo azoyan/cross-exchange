@@ -13,6 +13,18 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             color: #333;
         }
+        
+        /* Убираем отступы на мобильных устройствах */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px 0; /* Оставляем только вертикальные отступы */
+            }
+            .container {
+                padding-left: 5px;
+                padding-right: 5px;
+            }
+        }
+
         .header {
             padding: 10px 0;
             margin-bottom: 15px;
@@ -29,6 +41,16 @@
             padding: 10px;
             border-radius: 4px;
         }
+        
+        /* Прижимаем таблицу к левому краю на мобильных */
+        @media (max-width: 768px) {
+            .table-container {
+                padding: 10px 0; /* Убираем боковые отступы */
+                margin-left: -5px; /* Компенсируем оставшиеся отступы */
+                margin-right: -5px;
+            }
+        }
+
         .controls-container {
             display: flex;
             justify-content: flex-start;
@@ -41,6 +63,15 @@
             background: #f9f9f9;
             flex-wrap: wrap;
         }
+        
+        /* Оптимизация управления для мобильных */
+        @media (max-width: 576px) {
+            .controls-container {
+                gap: 8px;
+                padding: 6px;
+            }
+        }
+
         .control-group {
             display: flex;
             align-items: center;
@@ -56,6 +87,14 @@
             overflow-x: auto;
             max-height: 500px;
         }
+        
+        /* Убираем левый отступ при прокрутке */
+        @media (max-width: 768px) {
+            .table-scroll {
+                margin-left: -5px;
+            }
+        }
+
         .table {
             font-size: 0.78rem;
             margin-bottom: 0;
@@ -242,6 +281,17 @@
             }
             .step-title {
                 font-size: 0.82rem;
+            }
+            
+            /* Убираем разделитель на маленьких экранах */
+            .divider {
+                display: none;
+            }
+            
+            /* Делаем элементы управления более компактными */
+            .control-group {
+                flex: 1;
+                justify-content: center;
             }
         }
     </style>
