@@ -14,10 +14,9 @@
             color: #333;
         }
         
-        /* Убираем отступы на мобильных устройствах */
         @media (max-width: 768px) {
             body {
-                padding: 10px 0; /* Оставляем только вертикальные отступы */
+                padding: 10px 0;
             }
             .container {
                 padding-left: 5px;
@@ -42,15 +41,15 @@
             border-radius: 4px;
         }
         
-        /* Прижимаем таблицу к левому краю на мобильных */
         @media (max-width: 768px) {
             .table-container {
-                padding: 10px 0; /* Убираем боковые отступы */
-                margin-left: -5px; /* Компенсируем оставшиеся отступы */
+                padding: 10px 0;
+                margin-left: -5px;
                 margin-right: -5px;
             }
         }
 
+        /* Убираем скругления у блока управления */
         .controls-container {
             display: flex;
             justify-content: flex-start;
@@ -59,12 +58,11 @@
             align-items: center;
             padding: 8px 10px;
             border: 1px solid #e0e0e0;
-            border-radius: 4px;
+            border-radius: 0; /* Убрали скругления */
             background: #f9f9f9;
             flex-wrap: wrap;
         }
         
-        /* Оптимизация управления для мобильных */
         @media (max-width: 576px) {
             .controls-container {
                 gap: 8px;
@@ -88,7 +86,6 @@
             max-height: 500px;
         }
         
-        /* Убираем левый отступ при прокрутке */
         @media (max-width: 768px) {
             .table-scroll {
                 margin-left: -5px;
@@ -102,6 +99,17 @@
             border-collapse: collapse;
             width: 100%;
         }
+        
+        /* Серый фон для верхней строки (рубли) */
+        .table thead tr th:not(:first-child) {
+            background-color: #f0f0f0 !important;
+        }
+        
+        /* Серый фон для левого столбца (песо) */
+        .table tbody tr th {
+            background-color: #f0f0f0 !important;
+        }
+
         .table th {
             background-color: #fff;
             color: #333;
@@ -115,7 +123,7 @@
         .table th:first-child {
             left: 0;
             z-index: 3;
-            background-color: #fff;
+            background-color: #fff !important;
         }
         .table td:first-child {
             position: sticky;
@@ -283,12 +291,10 @@
                 font-size: 0.82rem;
             }
             
-            /* Убираем разделитель на маленьких экранах */
             .divider {
                 display: none;
             }
             
-            /* Делаем элементы управления более компактными */
             .control-group {
                 flex: 1;
                 justify-content: center;
@@ -305,7 +311,6 @@
 
         <div class="compact-container">
             <div class="table-container">
-                <!-- Блок управления с рамкой -->
                 <div class="controls-container">
                     <div class="control-group">
                         <div class="control-label">Песо</div>
@@ -330,24 +335,20 @@
                     </div>
                 </div>
 
-                <!-- Таблица без рамок -->
                 <div class="table-scroll">
                     <table id="conversion-table" class="table">
                         <thead>
                             <tr>
                                 <th>ARS/RUB</th>
-                                <!-- Заголовки рублей будут сгенерированы скриптом -->
                             </tr>
                         </thead>
                         <tbody>
-                            <!-- Строки песо будут сгенерированы скриптом -->
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
 
-        <!-- Блок с формулой расчета -->
         <div class="formula-display">
             <span id="formula-text">Выберите ячейку для отображения расчета</span>
         </div>
@@ -381,59 +382,48 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Начальные диапазоны
         let rubStart = 77.0;
         let rubEnd = 80.5;
         let arsStart = 1190;
         let arsEnd = 1210;
         
-        // Шаги изменения
         let rubStep = 0.5;
         let arsStep = 5;
         
-        // Количество отображаемых столбцов и строк (10x10)
         const rubCount = 10;
         const arsCount = 10;
         
-        // Текущие значения для подсветки
         let currentRub = 80.0;
         let currentArs = 1200;
         
-        // Инициализация таблицы
         function initTable() {
             renderTable();
             updateFormula();
             updateStepInputs();
         }
         
-        // Обновление полей ввода шагов
         function updateStepInputs() {
             document.getElementById('rub-step-input').value = rubStep;
             document.getElementById('ars-step-input').value = arsStep;
         }
         
-        // Обновление формулы расчета
         function updateFormula() {
             const result = (currentArs / currentRub).toFixed(2);
             const formula = `${currentArs} ARS/USD ÷ ${currentRub.toFixed(1)} RUB/USD = <span class="formula-value">${result} ARS/RUB</span>`;
             document.getElementById('formula-text').innerHTML = formula;
         }
         
-        // Генерация таблицы
         function renderTable() {
             const table = document.getElementById('conversion-table');
             
-            // Очищаем заголовки
             const headerRow = table.querySelector('thead tr');
             while (headerRow.children.length > 1) {
                 headerRow.removeChild(headerRow.lastChild);
             }
             
-            // Очищаем тело таблицы
             const tbody = table.querySelector('tbody');
             tbody.innerHTML = '';
             
-            // Добавляем заголовки рубля
             for (let i = 0; i < rubCount; i++) {
                 const rubValue = rubStart + i * rubStep;
                 const th = document.createElement('th');
@@ -442,18 +432,15 @@
                 headerRow.appendChild(th);
             }
             
-            // Добавляем строки песо
             for (let i = 0; i < arsCount; i++) {
                 const arsValue = arsStart + i * arsStep;
                 const tr = document.createElement('tr');
                 
-                // Ячейка с песо
                 const arsCell = document.createElement('th');
                 arsCell.textContent = arsValue;
                 arsCell.title = `Курс песо: ${arsValue} ARS за 1 USD`;
                 tr.appendChild(arsCell);
                 
-                // Добавляем ячейки с курсом
                 for (let j = 0; j < rubCount; j++) {
                     const rubValue = rubStart + j * rubStep;
                     const result = arsValue / rubValue;
@@ -462,24 +449,20 @@
                     td.textContent = result.toFixed(2);
                     td.title = `${arsValue} ARS/USD / ${rubValue} RUB/USD = ${result.toFixed(2)} ARS/RUB`;
                     
-                    // Подсветка текущих значений
                     if (Math.abs(rubValue - currentRub) < rubStep/2 && 
                         Math.abs(arsValue - currentArs) < arsStep/2) {
                         td.classList.add('highlight');
                     }
                     
-                    // Обработчик для обновления текущих значений
                     td.addEventListener('mouseenter', () => {
                         currentRub = rubValue;
                         currentArs = arsValue;
                         updateFormula();
                         
-                        // Убираем подсветку со всех ячеек
                         document.querySelectorAll('.highlight').forEach(el => {
                             el.classList.remove('highlight');
                         });
                         
-                        // Подсвечиваем текущую ячейку
                         td.classList.add('highlight');
                     });
                     
@@ -490,7 +473,6 @@
             }
         }
         
-        // Обработчики кнопок прокрутки
         document.getElementById('rub-left').addEventListener('click', () => {
             rubStart -= rubStep;
             renderTable();
@@ -511,7 +493,6 @@
             renderTable();
         });
         
-        // Применение шага для рубля
         document.getElementById('apply-rub-step').addEventListener('click', () => {
             const newStep = parseFloat(document.getElementById('rub-step-input').value);
             if (!isNaN(newStep) && newStep >= 0.1 && newStep <= 5) {
@@ -522,7 +503,6 @@
             }
         });
         
-        // Применение шага для песо
         document.getElementById('apply-ars-step').addEventListener('click', () => {
             const newStep = parseInt(document.getElementById('ars-step-input').value);
             if (!isNaN(newStep) && newStep >= 1 && newStep <= 50) {
@@ -533,7 +513,6 @@
             }
         });
         
-        // Обработчик сброса
         document.getElementById('reset-view').addEventListener('click', () => {
             rubStart = 77.0;
             arsStart = 1190;
@@ -545,7 +524,6 @@
             initTable();
         });
         
-        // Инициализация при загрузке
         document.addEventListener('DOMContentLoaded', initTable);
     </script>
 </body>
