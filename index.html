@@ -4,465 +4,220 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Конвертер RUB → ARS через USD</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body {
-            background-color: #f8f9fa;
-            padding: 15px;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: #333;
-        }
-        
-        @media (max-width: 768px) {
-            body {
-                padding: 10px 0;
-            }
-            .container {
-                padding-left: 5px;
-                padding-right: 5px;
-            }
-        }
-
-        .header {
-            padding: 10px 0;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-        .compact-container {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        .table-container {
-            position: relative;
-            background: white;
-            padding: 10px;
-            border-radius: 4px;
-        }
-        
-        @media (max-width: 768px) {
-            .table-container {
-                padding: 10px 0;
-                margin-left: -5px;
-                margin-right: -5px;
-            }
-        }
-
-        /* Убираем скругления у блока управления */
-        .controls-container {
-            display: flex;
-            justify-content: flex-start;
-            gap: 15px;
-            margin-bottom: 8px;
-            align-items: center;
-            padding: 8px 10px;
-            border: 1px solid #e0e0e0;
-            border-radius: 0; /* Убрали скругления */
-            background: #f9f9f9;
-            flex-wrap: wrap;
-        }
-        
-        @media (max-width: 576px) {
-            .controls-container {
-                gap: 8px;
-                padding: 6px;
-            }
-        }
-
-        .control-group {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .control-label {
-            font-size: 0.82rem;
-            color: #555;
-            font-weight: 500;
-            min-width: 45px;
-        }
-        .table-scroll {
-            overflow-x: auto;
-            max-height: 500px;
-        }
-        
-        @media (max-width: 768px) {
-            .table-scroll {
-                margin-left: -5px;
-            }
-        }
-
-        .table {
-            font-size: 0.78rem;
-            margin-bottom: 0;
-            color: #333;
+        /* Минимальные кастомные стили только для таблицы */
+        .table-container table {
             border-collapse: collapse;
             width: 100%;
         }
-        
-        /* Серый фон для верхней строки (рубли) */
-        .table thead tr th:not(:first-child) {
-            background-color: #f0f0f0 !important;
-        }
-        
-        /* Серый фон для левого столбца (песо) */
-        .table tbody tr th {
-            background-color: #f0f0f0 !important;
-        }
-
-        .table th {
-            background-color: #fff;
-            color: #333;
-            position: sticky;
-            top: 0;
-            vertical-align: middle;
-            text-align: center;
-            padding: 5px 6px;
-            font-weight: 600;
-        }
-        .table th:first-child {
-            left: 0;
-            z-index: 3;
-            background-color: #fff !important;
-        }
-        .table td:first-child {
+        .table-container th:first-child,
+        .table-container td:first-child {
             position: sticky;
             left: 0;
-            background-color: #fff;
-            z-index: 2;
-            font-weight: 500;
-            padding: 4px 8px;
+            z-index: 10;
         }
-        .table td {
-            text-align: center;
-            vertical-align: middle;
-            min-width: 65px;
-            padding: 4px 6px;
-            transition: background-color 0.15s;
+        .table-container thead tr th:not(:first-child) {
+            background-color: #f0f0f0;
         }
-        .table td:hover {
-            background-color: #f5f5f5 !important;
+        .table-container tbody tr th {
+            background-color: #f0f0f0;
         }
-        .highlight {
-            background-color: #f0f0f0 !important;
+        .table-container td.highlight {
+            background-color: #f0f0f0;
             font-weight: 600;
         }
-        .btn-scroll {
-            width: 26px;
-            height: 26px;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.75rem;
-            background: #fff;
-            color: #555;
-            border: 1px solid #ddd;
-            transition: all 0.2s;
-        }
-        .btn-scroll:hover {
-            background: #f5f5f5;
-            border-color: #ccc;
-        }
-        .btn-scroll:active {
-            background: #e9e9e9;
-        }
-        .step-controls {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 15px;
-            flex-wrap: wrap;
-        }
-        .step-panel {
-            background: #fff;
-            padding: 10px 12px;
-            border-radius: 4px;
-            min-width: 180px;
-            border: 1px solid #e0e0e0;
-            flex: 1;
-            max-width: 300px;
-        }
-        .step-title {
-            text-align: center;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: #333;
-            font-size: 0.85rem;
-        }
-        .step-input-group {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .step-label {
-            font-size: 0.82rem;
-            color: #555;
-            min-width: 60px;
-        }
-        .step-input {
-            flex: 1;
-            padding: 5px 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            text-align: center;
-            font-size: 0.85rem;
-            max-width: 100px;
-        }
-        .btn-reset {
-            margin-top: 8px;
-            width: 100%;
-            background: #fff;
-            border: 1px solid #ddd;
-            font-weight: 500;
-            font-size: 0.8rem;
-            padding: 6px;
-            color: #555;
-            transition: all 0.2s;
-        }
-        .btn-reset:hover {
-            background: #f5f5f5;
-            border-color: #ccc;
-        }
-        .divider {
-            width: 1px;
-            height: 26px;
-            background: #e0e0e0;
-            margin: 0 8px;
-        }
-        .table-header {
-            font-weight: 600;
-            font-size: 1.2rem;
-            margin-bottom: 5px;
-            color: #333;
-        }
-        .table-subheader {
-            font-size: 0.85rem;
-            color: #666;
-            margin-bottom: 10px;
-        }
-        .formula-display {
-            margin-top: 12px;
-            text-align: center;
-            padding: 10px;
-            background: #f9f9f9;
-            border-radius: 4px;
-            font-size: 0.85rem;
-        }
-        .formula-value {
-            font-weight: 600;
-            color: #333;
-        }
-        .step-button {
-            padding: 5px 10px;
-            font-size: 0.8rem;
-            margin-top: 8px;
-        }
-        @media (max-width: 576px) {
-            .controls-container {
-                gap: 10px;
-                padding: 6px 8px;
-            }
-            .control-group {
-                gap: 4px;
-            }
-            .control-label {
-                min-width: 40px;
-                font-size: 0.78rem;
-            }
-            .btn-scroll {
-                width: 24px;
-                height: 24px;
-                font-size: 0.7rem;
-            }
-            .step-panel {
-                padding: 8px 10px;
-                min-width: 100%;
-            }
-            .step-input-group {
-                gap: 6px;
-            }
-            .step-input {
-                padding: 4px 6px;
-                font-size: 0.82rem;
-                max-width: 80px;
-            }
-            .step-title {
-                font-size: 0.82rem;
-            }
-            
-            .divider {
-                display: none;
-            }
-            
-            .control-group {
-                flex: 1;
-                justify-content: center;
-            }
+        .table-container td:hover {
+            background-color: #f5f5f5;
         }
     </style>
 </head>
-<body>
-    <div class="container">
-        <div class="header">
-            <div class="table-header">Конвертер RUB → ARS</div>
-            <div class="table-subheader">Через курс USD: ARS/RUB = (ARS/USD) / (RUB/USD)</div>
+<body class="bg-gray-100 p-4">
+    <div class="max-w-6xl mx-auto">
+        <!-- Заголовок -->
+        <div class="text-center py-3 mb-4">
+            <h1 class="text-xl font-bold text-gray-800">Конвертер RUB → ARS</h1>
+            <p class="text-sm text-gray-600 mt-1">Через курс USD: ARS/RUB = (ARS/USD) / (RUB/USD)</p>
         </div>
 
-        <div class="compact-container">
-            <div class="table-container">
-                <div class="controls-container">
-                    <div class="control-group">
-                        <div class="control-label">Песо</div>
-                        <button id="ars-up" class="btn-scroll" title="Сдвинуть диапазон песо вверх">
-                            <i class="fas fa-arrow-up"></i>
-                        </button>
-                        <button id="ars-down" class="btn-scroll" title="Сдвинуть диапазон песо вниз">
-                            <i class="fas fa-arrow-down"></i>
-                        </button>
-                    </div>
-                    
-                    <div class="divider"></div>
-                    
-                    <div class="control-group">
-                        <div class="control-label">Рубли</div>
-                        <button id="rub-left" class="btn-scroll" title="Сдвинуть диапазон рублей влево">
-                            <i class="fas fa-arrow-left"></i>
-                        </button>
-                        <button id="rub-right" class="btn-scroll" title="Сдвинуть диапазон рублей вправо">
-                            <i class="fas fa-arrow-right"></i>
-                        </button>
-                    </div>
+        <!-- Основной контейнер таблицы -->
+        <div class="table-container bg-white rounded-lg shadow-sm overflow-hidden">
+            <!-- Панель управления -->
+            <div class="flex flex-wrap items-center gap-3 p-3 border-b border-gray-200 bg-gray-50">
+                <div class="flex items-center gap-2">
+                    <span class="text-xs font-medium text-gray-600">Песо</span>
+                    <button id="ars-up" class="w-6 h-6 flex items-center justify-center text-xs bg-white text-gray-600 border border-gray-300 hover:bg-gray-100" title="Сдвинуть диапазон песо вверх">
+                        <i class="fas fa-arrow-up"></i>
+                    </button>
+                    <button id="ars-down" class="w-6 h-6 flex items-center justify-center text-xs bg-white text-gray-600 border border-gray-300 hover:bg-gray-100" title="Сдвинуть диапазон песо вниз">
+                        <i class="fas fa-arrow-down"></i>
+                    </button>
                 </div>
+                
+                <div class="w-px h-6 bg-gray-300"></div>
+                
+                <div class="flex items-center gap-2">
+                    <span class="text-xs font-medium text-gray-600">Рубли</span>
+                    <button id="rub-left" class="w-6 h-6 flex items-center justify-center text-xs bg-white text-gray-600 border border-gray-300 hover:bg-gray-100" title="Сдвинуть диапазон рублей влево">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <button id="rub-right" class="w-6 h-6 flex items-center justify-center text-xs bg-white text-gray-600 border border-gray-300 hover:bg-gray-100" title="Сдвинуть диапазон рублей вправо">
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
 
-                <div class="table-scroll">
-                    <table id="conversion-table" class="table">
-                        <thead>
-                            <tr>
-                                <th>ARS/RUB</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-                </div>
+            <!-- Область таблицы с прокруткой -->
+            <div class="overflow-x-auto max-h-[500px]">
+                <table id="conversion-table" class="w-full text-xs">
+                    <thead>
+                        <tr>
+                            <th class="sticky top-0 left-0 z-20 bg-white p-2 font-semibold text-center">ARS/RUB</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Данные будут сгенерированы скриптом -->
+                    </tbody>
+                </table>
             </div>
         </div>
 
-        <div class="formula-display">
+        <!-- Блок формулы -->
+        <div class="mt-3 text-center p-3 bg-gray-50 rounded-lg text-sm">
             <span id="formula-text">Выберите ячейку для отображения расчета</span>
         </div>
 
-        <div class="step-controls">
-            <div class="step-panel">
-                <div class="step-title">Настройка шага</div>
-                <div class="step-input-group">
-                    <div class="step-label">Рубля:</div>
-                    <input type="number" id="rub-step-input" class="step-input" min="0.1" max="5" step="0.1" value="0.5">
-                    <button id="apply-rub-step" class="btn btn-sm btn-outline-secondary step-button">
+        <!-- Панель управления шагом -->
+        <div class="flex flex-wrap gap-3 mt-4">
+            <div class="bg-white p-4 border border-gray-200 rounded-lg flex-1 min-w-[200px] max-w-md">
+                <h3 class="text-center font-semibold text-gray-700 text-sm mb-3">Настройка шага</h3>
+                <div class="flex items-center gap-2 mb-3">
+                    <label class="text-xs text-gray-600 w-16">Рубля:</label>
+                    <input type="number" id="rub-step-input" class="flex-1 p-2 border border-gray-300 rounded text-center text-sm" min="0.1" max="5" step="0.1" value="0.5">
+                    <button id="apply-rub-step" class="text-xs py-1.5 px-3 bg-gray-50 border border-gray-300 rounded hover:bg-gray-100">
                         Применить
                     </button>
                 </div>
-                <div class="step-input-group mt-2">
-                    <div class="step-label">Песо:</div>
-                    <input type="number" id="ars-step-input" class="step-input" min="1" max="50" step="1" value="5">
-                    <button id="apply-ars-step" class="btn btn-sm btn-outline-secondary step-button">
+                <div class="flex items-center gap-2">
+                    <label class="text-xs text-gray-600 w-16">Песо:</label>
+                    <input type="number" id="ars-step-input" class="flex-1 p-2 border border-gray-300 rounded text-center text-sm" min="1" max="50" step="1" value="5">
+                    <button id="apply-ars-step" class="text-xs py-1.5 px-3 bg-gray-50 border border-gray-300 rounded hover:bg-gray-100">
                         Применить
                     </button>
                 </div>
             </div>
             
-            <div class="step-panel d-flex flex-column justify-content-center">
-                <button id="reset-view" class="btn btn-reset">
-                    <i class="fas fa-sync-alt me-1"></i>Сбросить настройки
+            <!-- Кнопка сброса -->
+            <div class="bg-white p-4 border border-gray-200 rounded-lg flex items-center min-w-[200px]">
+                <button id="reset-view" class="w-full py-2 bg-white border border-gray-300 font-medium text-sm text-gray-600 hover:bg-gray-50 flex items-center justify-center">
+                    <i class="fas fa-sync-alt mr-2"></i>Сбросить настройки
                 </button>
             </div>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // Начальные диапазоны
         let rubStart = 77.0;
         let rubEnd = 80.5;
         let arsStart = 1190;
         let arsEnd = 1210;
         
+        // Шаги изменения
         let rubStep = 0.5;
         let arsStep = 5;
         
+        // Количество отображаемых столбцов и строк
         const rubCount = 10;
         const arsCount = 10;
         
+        // Текущие значения для подсветки
         let currentRub = 80.0;
         let currentArs = 1200;
         
+        // Инициализация таблицы
         function initTable() {
             renderTable();
             updateFormula();
             updateStepInputs();
         }
         
+        // Обновление полей ввода шагов
         function updateStepInputs() {
             document.getElementById('rub-step-input').value = rubStep;
             document.getElementById('ars-step-input').value = arsStep;
         }
         
+        // Обновление формулы расчета
         function updateFormula() {
             const result = (currentArs / currentRub).toFixed(2);
-            const formula = `${currentArs} ARS/USD ÷ ${currentRub.toFixed(1)} RUB/USD = <span class="formula-value">${result} ARS/RUB</span>`;
+            const formula = `${currentArs} ARS/USD ÷ ${currentRub.toFixed(1)} RUB/USD = <span class="font-semibold">${result} ARS/RUB</span>`;
             document.getElementById('formula-text').innerHTML = formula;
         }
         
+        // Генерация таблицы
         function renderTable() {
             const table = document.getElementById('conversion-table');
-            
+            const tbody = table.querySelector('tbody');
             const headerRow = table.querySelector('thead tr');
+            
+            // Очищаем таблицу
+            tbody.innerHTML = '';
             while (headerRow.children.length > 1) {
                 headerRow.removeChild(headerRow.lastChild);
             }
             
-            const tbody = table.querySelector('tbody');
-            tbody.innerHTML = '';
-            
+            // Заголовки для рублей
             for (let i = 0; i < rubCount; i++) {
                 const rubValue = rubStart + i * rubStep;
                 const th = document.createElement('th');
+                th.className = 'sticky top-0 p-2 bg-gray-100 font-semibold text-center';
                 th.textContent = rubValue.toFixed(1);
                 th.title = `Курс рубля: ${rubValue.toFixed(1)} RUB за 1 USD`;
                 headerRow.appendChild(th);
             }
             
+            // Строки для песо
             for (let i = 0; i < arsCount; i++) {
                 const arsValue = arsStart + i * arsStep;
                 const tr = document.createElement('tr');
                 
+                // Ячейка с песо
                 const arsCell = document.createElement('th');
+                arsCell.className = 'p-2 font-medium text-center';
                 arsCell.textContent = arsValue;
                 arsCell.title = `Курс песо: ${arsValue} ARS за 1 USD`;
                 tr.appendChild(arsCell);
                 
+                // Ячейки с курсами
                 for (let j = 0; j < rubCount; j++) {
                     const rubValue = rubStart + j * rubStep;
                     const result = arsValue / rubValue;
                     
                     const td = document.createElement('td');
+                    td.className = 'p-2 text-center';
                     td.textContent = result.toFixed(2);
                     td.title = `${arsValue} ARS/USD / ${rubValue} RUB/USD = ${result.toFixed(2)} ARS/RUB`;
                     
+                    // Подсветка текущих значений
                     if (Math.abs(rubValue - currentRub) < rubStep/2 && 
                         Math.abs(arsValue - currentArs) < arsStep/2) {
                         td.classList.add('highlight');
                     }
                     
+                    // Обновление при наведении
                     td.addEventListener('mouseenter', () => {
                         currentRub = rubValue;
                         currentArs = arsValue;
                         updateFormula();
                         
+                        // Сброс предыдущей подсветки
                         document.querySelectorAll('.highlight').forEach(el => {
                             el.classList.remove('highlight');
                         });
                         
+                        // Установка новой подсветки
                         td.classList.add('highlight');
                     });
                     
@@ -473,6 +228,7 @@
             }
         }
         
+        // Обработчики кнопок управления
         document.getElementById('rub-left').addEventListener('click', () => {
             rubStart -= rubStep;
             renderTable();
@@ -493,9 +249,10 @@
             renderTable();
         });
         
+        // Применение шага для рубля
         document.getElementById('apply-rub-step').addEventListener('click', () => {
             const newStep = parseFloat(document.getElementById('rub-step-input').value);
-            if (!isNaN(newStep) && newStep >= 0.1 && newStep <= 5) {
+            if (newStep >= 0.1 && newStep <= 5) {
                 rubStep = newStep;
                 renderTable();
             } else {
@@ -503,9 +260,10 @@
             }
         });
         
+        // Применение шага для песо
         document.getElementById('apply-ars-step').addEventListener('click', () => {
             const newStep = parseInt(document.getElementById('ars-step-input').value);
-            if (!isNaN(newStep) && newStep >= 1 && newStep <= 50) {
+            if (newStep >= 1 && newStep <= 50) {
                 arsStep = newStep;
                 renderTable();
             } else {
@@ -513,6 +271,7 @@
             }
         });
         
+        // Обработчик сброса
         document.getElementById('reset-view').addEventListener('click', () => {
             rubStart = 77.0;
             arsStart = 1190;
@@ -520,10 +279,10 @@
             arsStep = 5;
             currentRub = 80.0;
             currentArs = 1200;
-            
             initTable();
         });
         
+        // Инициализация при загрузке
         document.addEventListener('DOMContentLoaded', initTable);
     </script>
 </body>
