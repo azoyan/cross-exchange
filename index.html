@@ -7,7 +7,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Минимальные кастомные стили только для таблицы */
         .table-container table {
             border-collapse: collapse;
             width: 100%;
@@ -31,14 +30,28 @@
         .table-container td:hover {
             background-color: #f5f5f5;
         }
+        .step-input {
+            width: 70px;
+        }
+        @media (max-width: 640px) {
+            .step-input {
+                width: 60px;
+            }
+            .step-button {
+                padding: 0.25rem 0.5rem;
+                font-size: 0.75rem;
+            }
+        }
     </style>
 </head>
 <body class="bg-gray-100 p-4">
     <div class="max-w-6xl mx-auto">
-        <!-- Заголовок -->
-        <div class="text-center py-3 mb-4">
+        <!-- Заголовок и формула -->
+        <div class="text-center py-3 mb-2">
             <h1 class="text-xl font-bold text-gray-800">Конвертер RUB → ARS</h1>
-            <p class="text-sm text-gray-600 mt-1">Через курс USD: ARS/RUB = (ARS/USD) / (RUB/USD)</p>
+            <div id="formula-text" class="text-sm text-gray-600 mt-1 bg-gray-50 p-2 rounded-lg">
+                Выберите ячейку для отображения расчета
+            </div>
         </div>
 
         <!-- Основной контейнер таблицы -->
@@ -83,37 +96,27 @@
             </div>
         </div>
 
-        <!-- Блок формулы -->
-        <div class="mt-3 text-center p-3 bg-gray-50 rounded-lg text-sm">
-            <span id="formula-text">Выберите ячейку для отображения расчета</span>
-        </div>
-
-        <!-- Панель управления шагом -->
-        <div class="flex flex-wrap gap-3 mt-4">
-            <div class="bg-white p-4 border border-gray-200 rounded-lg flex-1 min-w-[200px] max-w-md">
-                <h3 class="text-center font-semibold text-gray-700 text-sm mb-3">Настройка шага</h3>
-                <div class="flex items-center gap-2 mb-3">
-                    <label class="text-xs text-gray-600 w-16">Рубля:</label>
-                    <input type="number" id="rub-step-input" class="flex-1 p-2 border border-gray-300 rounded text-center text-sm" min="0.1" max="5" step="0.1" value="0.5">
-                    <button id="apply-rub-step" class="text-xs py-1.5 px-3 bg-gray-50 border border-gray-300 rounded hover:bg-gray-100">
-                        Применить
-                    </button>
-                </div>
-                <div class="flex items-center gap-2">
-                    <label class="text-xs text-gray-600 w-16">Песо:</label>
-                    <input type="number" id="ars-step-input" class="flex-1 p-2 border border-gray-300 rounded text-center text-sm" min="1" max="50" step="1" value="5">
-                    <button id="apply-ars-step" class="text-xs py-1.5 px-3 bg-gray-50 border border-gray-300 rounded hover:bg-gray-100">
-                        Применить
-                    </button>
-                </div>
-            </div>
-            
-            <!-- Кнопка сброса -->
-            <div class="bg-white p-4 border border-gray-200 rounded-lg flex items-center min-w-[200px]">
-                <button id="reset-view" class="w-full py-2 bg-white border border-gray-300 font-medium text-sm text-gray-600 hover:bg-gray-50 flex items-center justify-center">
-                    <i class="fas fa-sync-alt mr-2"></i>Сбросить настройки
+        <!-- Компактная панель настроек -->
+        <div class="flex flex-wrap items-center justify-center gap-3 mt-4 p-3 bg-white rounded-lg border border-gray-200">
+            <div class="flex items-center gap-2">
+                <span class="text-xs text-gray-600">Шаг рубля:</span>
+                <input type="number" id="rub-step-input" class="step-input p-1 border border-gray-300 rounded text-center text-sm" min="0.01" max="5" step="0.01" value="0.5">
+                <button id="apply-rub-step" class="step-button text-xs py-1 px-2 bg-gray-50 border border-gray-300 rounded hover:bg-gray-100">
+                    Применить
                 </button>
             </div>
+            
+            <div class="flex items-center gap-2">
+                <span class="text-xs text-gray-600">Шаг песо:</span>
+                <input type="number" id="ars-step-input" class="step-input p-1 border border-gray-300 rounded text-center text-sm" min="0.01" max="50" step="0.01" value="5">
+                <button id="apply-ars-step" class="step-button text-xs py-1 px-2 bg-gray-50 border border-gray-300 rounded hover:bg-gray-100">
+                    Применить
+                </button>
+            </div>
+            
+            <button id="reset-view" class="step-button text-xs py-1 px-3 bg-gray-50 border border-gray-300 rounded hover:bg-gray-100 flex items-center">
+                <i class="fas fa-sync-alt mr-1"></i>Сбросить
+            </button>
         </div>
     </div>
 
@@ -151,8 +154,8 @@
         
         // Обновление формулы расчета
         function updateFormula() {
-            const result = (currentArs / currentRub).toFixed(2);
-            const formula = `${currentArs} ARS/USD ÷ ${currentRub.toFixed(1)} RUB/USD = <span class="font-semibold">${result} ARS/RUB</span>`;
+            const result = (currentArs / currentRub).toFixed(4);
+            const formula = `${currentArs} ARS/USD ÷ ${currentRub.toFixed(2)} RUB/USD = <span class="font-semibold">${result} ARS/RUB</span>`;
             document.getElementById('formula-text').innerHTML = formula;
         }
         
@@ -173,8 +176,8 @@
                 const rubValue = rubStart + i * rubStep;
                 const th = document.createElement('th');
                 th.className = 'sticky top-0 p-2 bg-gray-100 font-semibold text-center';
-                th.textContent = rubValue.toFixed(1);
-                th.title = `Курс рубля: ${rubValue.toFixed(1)} RUB за 1 USD`;
+                th.textContent = rubValue.toFixed(2);
+                th.title = `Курс рубля: ${rubValue.toFixed(2)} RUB за 1 USD`;
                 headerRow.appendChild(th);
             }
             
@@ -186,8 +189,8 @@
                 // Ячейка с песо
                 const arsCell = document.createElement('th');
                 arsCell.className = 'p-2 font-medium text-center';
-                arsCell.textContent = arsValue;
-                arsCell.title = `Курс песо: ${arsValue} ARS за 1 USD`;
+                arsCell.textContent = arsValue.toFixed(2);
+                arsCell.title = `Курс песо: ${arsValue.toFixed(2)} ARS за 1 USD`;
                 tr.appendChild(arsCell);
                 
                 // Ячейки с курсами
@@ -197,8 +200,8 @@
                     
                     const td = document.createElement('td');
                     td.className = 'p-2 text-center';
-                    td.textContent = result.toFixed(2);
-                    td.title = `${arsValue} ARS/USD / ${rubValue} RUB/USD = ${result.toFixed(2)} ARS/RUB`;
+                    td.textContent = result.toFixed(4);
+                    td.title = `${arsValue.toFixed(2)} ARS/USD / ${rubValue.toFixed(2)} RUB/USD = ${result.toFixed(4)} ARS/RUB`;
                     
                     // Подсветка текущих значений
                     if (Math.abs(rubValue - currentRub) < rubStep/2 && 
@@ -252,22 +255,22 @@
         // Применение шага для рубля
         document.getElementById('apply-rub-step').addEventListener('click', () => {
             const newStep = parseFloat(document.getElementById('rub-step-input').value);
-            if (newStep >= 0.1 && newStep <= 5) {
+            if (newStep >= 0.01 && newStep <= 5) {
                 rubStep = newStep;
                 renderTable();
             } else {
-                alert("Пожалуйста, введите корректное значение шага для рубля (от 0.1 до 5)");
+                alert("Пожалуйста, введите корректное значение шага для рубля (от 0.01 до 5)");
             }
         });
         
         // Применение шага для песо
         document.getElementById('apply-ars-step').addEventListener('click', () => {
-            const newStep = parseInt(document.getElementById('ars-step-input').value);
-            if (newStep >= 1 && newStep <= 50) {
+            const newStep = parseFloat(document.getElementById('ars-step-input').value);
+            if (newStep >= 0.01 && newStep <= 50) {
                 arsStep = newStep;
                 renderTable();
             } else {
-                alert("Пожалуйста, введите корректное значение шага для песо (от 1 до 50)");
+                alert("Пожалуйста, введите корректное значение шага для песо (от 0.01 до 50)");
             }
         });
         
