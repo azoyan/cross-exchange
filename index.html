@@ -34,10 +34,26 @@
             width: 70px;
             padding: 2px 4px;
         }
+        /* Динамические размеры для таблицы */
+        #table-wrapper {
+            height: 60vh;
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+        }
+        .table-scroll-area {
+            flex: 1;
+            overflow: auto;
+        }
+        @media (max-height: 600px) {
+            #table-wrapper {
+                height: 50vh;
+            }
+        }
     </style>
 </head>
 <body class="bg-gray-100 p-4">
-    <div class="max-w-6xl mx-auto">
+    <div class="max-w-6xl mx-auto flex flex-col h-screen max-h-screen">
         <!-- Заголовок и формула -->
         <div class="text-center py-3 mb-2">
             <h1 class="text-xl font-bold text-gray-800">Конвертер RUB → ARS</h1>
@@ -74,7 +90,7 @@
             </div>
 
             <!-- Область таблицы с прокруткой -->
-            <div class="overflow-x-auto max-h-[500px]">
+            <div class="table-scroll-area">
                 <table id="conversion-table" class="w-full text-xs">
                     <thead>
                         <tr>
@@ -136,15 +152,16 @@
         // Расчет оптимального размера таблицы
         function calculateTableSize() {
             const wrapper = document.getElementById('table-wrapper');
-            if (!wrapper) return { rubCount: 10, arsCount: 10 };
+            const scrollArea = document.querySelector('.table-scroll-area');
+            if (!wrapper || !scrollArea) return { rubCount: 10, arsCount: 10 };
             
             // Ориентировочные размеры ячеек
             const cellWidth = 70;  // px
             const cellHeight = 30; // px
             
             // Доступные размеры
-            const availableWidth = wrapper.clientWidth - 120; // минус первый столбец
-            const availableHeight = wrapper.clientHeight - 120; // минус заголовки
+            const availableWidth = scrollArea.clientWidth - 100; // минус первый столбец
+            const availableHeight = scrollArea.clientHeight;
             
             // Рассчитываем количество ячеек
             const horizontalCells = Math.max(5, Math.floor(availableWidth / cellWidth));
@@ -152,7 +169,7 @@
             
             return {
                 rubCount: Math.min(20, horizontalCells),
-                arsCount: Math.min(30, verticalCells)
+                arsCount: Math.min(50, verticalCells)
             };
         }
         
@@ -306,7 +323,7 @@
             currentRub = 80.0;
             currentArs = 1200;
             updateStepInputs();
-            initTable(); // Пересчитываем размеры
+            initTable();
         });
         
         // Реакция на изменение размера окна
