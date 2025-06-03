@@ -34,26 +34,14 @@
             width: 70px;
             padding: 2px 4px;
         }
-        /* Динамические размеры для таблицы */
-        #table-wrapper {
-            height: 60vh;
-            min-height: 300px;
-            display: flex;
-            flex-direction: column;
-        }
+        /* Убираем все внутренние скроллы */
         .table-scroll-area {
-            flex: 1;
-            overflow: auto;
-        }
-        @media (max-height: 600px) {
-            #table-wrapper {
-                height: 50vh;
-            }
+            overflow: hidden;
         }
     </style>
 </head>
-<body class="bg-gray-100 p-4">
-    <div class="max-w-6xl mx-auto flex flex-col h-screen max-h-screen">
+<body class="bg-gray-100 p-4 flex flex-col h-screen">
+    <div class="max-w-6xl mx-auto flex-grow flex flex-col">
         <!-- Заголовок и формула -->
         <div class="text-center py-3 mb-2">
             <h1 class="text-xl font-bold text-gray-800">Конвертер RUB → ARS</h1>
@@ -63,7 +51,7 @@
         </div>
 
         <!-- Основной контейнер таблицы -->
-        <div id="table-wrapper" class="table-container bg-white rounded-lg shadow-sm overflow-hidden">
+        <div class="table-container bg-white rounded-lg shadow-sm overflow-hidden flex-grow flex flex-col">
             <!-- Панель управления -->
             <div class="flex flex-wrap items-center gap-3 p-3 border-b border-gray-200 bg-gray-50">
                 <div class="flex items-center gap-2">
@@ -89,9 +77,9 @@
                 </div>
             </div>
 
-            <!-- Область таблицы с прокруткой -->
-            <div class="table-scroll-area">
-                <table id="conversion-table" class="w-full text-xs">
+            <!-- Область таблицы без прокрутки -->
+            <div class="table-scroll-area flex-grow">
+                <table id="conversion-table" class="w-full text-xs h-full">
                     <thead>
                         <tr>
                             <th class="sticky top-0 left-0 z-20 bg-white p-2 font-semibold text-center">ARS/RUB</th>
@@ -151,17 +139,16 @@
         
         // Расчет оптимального размера таблицы
         function calculateTableSize() {
-            const wrapper = document.getElementById('table-wrapper');
-            const scrollArea = document.querySelector('.table-scroll-area');
-            if (!wrapper || !scrollArea) return { rubCount: 10, arsCount: 10 };
+            const wrapper = document.querySelector('.table-scroll-area');
+            if (!wrapper) return { rubCount: 10, arsCount: 10 };
             
             // Ориентировочные размеры ячеек
             const cellWidth = 70;  // px
             const cellHeight = 30; // px
             
             // Доступные размеры
-            const availableWidth = scrollArea.clientWidth - 100; // минус первый столбец
-            const availableHeight = scrollArea.clientHeight;
+            const availableWidth = wrapper.clientWidth - 100; // минус первый столбец
+            const availableHeight = wrapper.clientHeight - 30; // минус заголовок
             
             // Рассчитываем количество ячеек
             const horizontalCells = Math.max(5, Math.floor(availableWidth / cellWidth));
