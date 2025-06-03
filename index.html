@@ -34,14 +34,29 @@
             width: 70px;
             padding: 2px 4px;
         }
-        /* Убираем все внутренние скроллы */
+        /* Убираем все скроллы */
         .table-scroll-area {
             overflow: hidden;
         }
+        /* Учитываем нижнюю панель */
+        .content-container {
+            padding-bottom: 80px;
+        }
+        .controls-panel {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            padding: 12px;
+            border-top: 1px solid #e0e0e0;
+            z-index: 100;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+        }
     </style>
 </head>
-<body class="bg-gray-100 p-4 flex flex-col h-screen">
-    <div class="max-w-6xl mx-auto flex-grow flex flex-col">
+<body class="bg-gray-100 p-4 flex flex-col min-h-screen">
+    <div class="content-container max-w-6xl mx-auto flex-grow flex flex-col w-full">
         <!-- Заголовок и формула -->
         <div class="text-center py-3 mb-2">
             <h1 class="text-xl font-bold text-gray-800">Конвертер RUB → ARS</h1>
@@ -51,7 +66,7 @@
         </div>
 
         <!-- Основной контейнер таблицы -->
-        <div class="table-container bg-white rounded-lg shadow-sm overflow-hidden flex-grow flex flex-col">
+        <div id="table-container" class="bg-white rounded-lg shadow-sm overflow-hidden flex-grow">
             <!-- Панель управления -->
             <div class="flex flex-wrap items-center gap-3 p-3 border-b border-gray-200 bg-gray-50">
                 <div class="flex items-center gap-2">
@@ -78,8 +93,8 @@
             </div>
 
             <!-- Область таблицы без прокрутки -->
-            <div class="table-scroll-area flex-grow">
-                <table id="conversion-table" class="w-full text-xs h-full">
+            <div class="table-scroll-area">
+                <table id="conversion-table" class="w-full text-xs">
                     <thead>
                         <tr>
                             <th class="sticky top-0 left-0 z-20 bg-white p-2 font-semibold text-center">ARS/RUB</th>
@@ -91,22 +106,26 @@
                 </table>
             </div>
         </div>
+    </div>
 
-        <!-- Компактная панель настроек -->
-        <div class="flex flex-wrap items-center justify-center gap-3 mt-4 p-3 bg-white rounded-lg border border-gray-200">
-            <div class="flex items-center gap-2">
-                <span class="text-xs text-gray-600">Шаг рубля:</span>
-                <input type="number" id="rub-step-input" class="step-input border border-gray-300 rounded text-center text-sm" min="0.01" max="5" step="0.01" value="0.5">
+    <!-- Фиксированная панель настроек внизу -->
+    <div class="controls-panel">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="flex flex-wrap items-center justify-center gap-3">
+                <div class="flex items-center gap-2">
+                    <span class="text-xs text-gray-600">Шаг рубля:</span>
+                    <input type="number" id="rub-step-input" class="step-input border border-gray-300 rounded text-center text-sm" min="0.01" max="5" step="0.01" value="0.5">
+                </div>
+                
+                <div class="flex items-center gap-2">
+                    <span class="text-xs text-gray-600">Шаг песо:</span>
+                    <input type="number" id="ars-step-input" class="step-input border border-gray-300 rounded text-center text-sm" min="0.01" max="50" step="0.01" value="5">
+                </div>
+                
+                <button id="reset-view" class="text-xs py-1 px-3 bg-gray-50 border border-gray-300 rounded hover:bg-gray-100 flex items-center">
+                    <i class="fas fa-sync-alt mr-1"></i>Сбросить
+                </button>
             </div>
-            
-            <div class="flex items-center gap-2">
-                <span class="text-xs text-gray-600">Шаг песо:</span>
-                <input type="number" id="ars-step-input" class="step-input border border-gray-300 rounded text-center text-sm" min="0.01" max="50" step="0.01" value="5">
-            </div>
-            
-            <button id="reset-view" class="text-xs py-1 px-3 bg-gray-50 border border-gray-300 rounded hover:bg-gray-100 flex items-center">
-                <i class="fas fa-sync-alt mr-1"></i>Сбросить
-            </button>
         </div>
     </div>
 
@@ -124,8 +143,7 @@
         let currentArs = 1200;
         
         // Размеры таблицы (будут рассчитаны динамически)
-        let rubCount = 10;
-        let arsCount = 10;
+        let rubCount, arsCount;
         
         // Функция для интеллектуального форматирования чисел
         function formatNumber(value, step) {
@@ -137,26 +155,27 @@
             return value.toFixed(2);
         }
         
-        // Расчет оптимального размера таблицы
+        // Расчет оптимального размера таблицы (один раз при загрузке)
         function calculateTableSize() {
-            const wrapper = document.querySelector('.table-scroll-area');
-            if (!wrapper) return { rubCount: 10, arsCount: 10 };
+            const container = document.getElementById('table-container');
+            if (!container) return { rubCount: 10, arsCount: 10 };
             
             // Ориентировочные размеры ячеек
             const cellWidth = 70;  // px
             const cellHeight = 30; // px
             
-            // Доступные размеры
-            const availableWidth = wrapper.clientWidth - 100; // минус первый столбец
-            const availableHeight = wrapper.clientHeight - 30; // минус заголовок
+            // Доступные размеры (с учетом нижней панели)
+            const availableWidth = container.clientWidth - 100; // минус первый столбец
+            const availableHeight = container.clientHeight - 60; // минус панель управления
             
             // Рассчитываем количество ячеек
             const horizontalCells = Math.max(5, Math.floor(availableWidth / cellWidth));
             const verticalCells = Math.max(5, Math.floor(availableHeight / cellHeight));
             
+            // Уменьшаем количество строк на 2, чтобы учесть нижнюю панель
             return {
                 rubCount: Math.min(20, horizontalCells),
-                arsCount: Math.min(50, verticalCells)
+                arsCount: Math.max(5, Math.min(50, verticalCells) - 2)
             };
         }
         
@@ -310,16 +329,7 @@
             currentRub = 80.0;
             currentArs = 1200;
             updateStepInputs();
-            initTable();
-        });
-        
-        // Реакция на изменение размера окна
-        let resizeTimer;
-        window.addEventListener('resize', () => {
-            clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(() => {
-                initTable();
-            }, 200);
+            renderTable();
         });
         
         // Инициализация при загрузке
