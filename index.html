@@ -47,7 +47,7 @@
         </div>
 
         <!-- Основной контейнер таблицы -->
-        <div class="table-container bg-white rounded-lg shadow-sm overflow-hidden">
+        <div id="table-wrapper" class="table-container bg-white rounded-lg shadow-sm overflow-hidden">
             <!-- Панель управления -->
             <div class="flex flex-wrap items-center gap-3 p-3 border-b border-gray-200 bg-gray-50">
                 <div class="flex items-center gap-2">
@@ -115,13 +115,13 @@
         let rubStep = 0.5;
         let arsStep = 5;
         
-        // Количество отображаемых столбцов и строк
-        const rubCount = 10;
-        const arsCount = 10;
-        
         // Текущие значения для подсветки
         let currentRub = 80.0;
         let currentArs = 1200;
+        
+        // Размеры таблицы (будут рассчитаны динамически)
+        let rubCount = 10;
+        let arsCount = 10;
         
         // Функция для интеллектуального форматирования чисел
         function formatNumber(value, step) {
@@ -133,8 +133,35 @@
             return value.toFixed(2);
         }
         
+        // Расчет оптимального размера таблицы
+        function calculateTableSize() {
+            const wrapper = document.getElementById('table-wrapper');
+            if (!wrapper) return { rubCount: 10, arsCount: 10 };
+            
+            // Ориентировочные размеры ячеек
+            const cellWidth = 70;  // px
+            const cellHeight = 30; // px
+            
+            // Доступные размеры
+            const availableWidth = wrapper.clientWidth - 120; // минус первый столбец
+            const availableHeight = wrapper.clientHeight - 120; // минус заголовки
+            
+            // Рассчитываем количество ячеек
+            const horizontalCells = Math.max(5, Math.floor(availableWidth / cellWidth));
+            const verticalCells = Math.max(5, Math.floor(availableHeight / cellHeight));
+            
+            return {
+                rubCount: Math.min(20, horizontalCells),
+                arsCount: Math.min(30, verticalCells)
+            };
+        }
+        
         // Инициализация таблицы
         function initTable() {
+            const sizes = calculateTableSize();
+            rubCount = sizes.rubCount;
+            arsCount = sizes.arsCount;
+            
             renderTable();
             updateFormula();
             updateStepInputs();
@@ -279,7 +306,16 @@
             currentRub = 80.0;
             currentArs = 1200;
             updateStepInputs();
-            renderTable();
+            initTable(); // Пересчитываем размеры
+        });
+        
+        // Реакция на изменение размера окна
+        let resizeTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
+                initTable();
+            }, 200);
         });
         
         // Инициализация при загрузке
