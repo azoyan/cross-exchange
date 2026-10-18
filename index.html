@@ -1,348 +1,438 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" class="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Конвертер RUB → ARS через USD</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        .table-container table {
-            border-collapse: collapse;
-            width: 100%;
-        }
-        .table-container th:first-child,
-        .table-container td:first-child {
-            position: sticky;
-            left: 0;
-            z-index: 10;
-        }
-        .table-container thead tr th:not(:first-child) {
-            background-color: #f0f0f0;
-        }
-        .table-container tbody tr th {
-            background-color: #f0f0f0;
-        }
-        .table-container td.highlight {
-            background-color: #f0f0f0;
-            font-weight: 600;
-        }
-        .table-container td:hover {
-            background-color: #f5f5f5;
-        }
-        .step-input {
-            width: 70px;
-            padding: 2px 4px;
-        }
-        /* Убираем все скроллы */
-        .table-scroll-area {
-            overflow: hidden;
-        }
-        /* Увеличиваем отступ для нижней панели */
-        .content-container {
-            padding-bottom: 20px;
-        }
-        .controls-panel {
-            margin-top: 20px;
-            background: white;
-            padding: 12px;
-            border: 1px solid #e0e0e0;
-            border-radius: 0.5rem;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-        .flex-container {
-            display: flex;
-            flex-direction: column;
-            min-height: calc(100vh - 2rem);
-        }
-        .table-wrapper {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-        }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cross Exchange Course</title>
+
+<script>
+(function () {
+  try {
+    const savedTheme = localStorage.getItem('cross-exchange-theme');
+    if (savedTheme === 'light') document.documentElement.classList.remove('dark');
+    else document.documentElement.classList.add('dark');
+  } catch (e) {}
+})();
+</script>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  darkMode: 'class',
+  theme: {
+    extend: {
+      colors: {
+        border:  'var(--border)',
+        input:   'var(--input)',
+        ring:    'var(--ring)',
+        background: 'var(--background)',
+        foreground: 'var(--foreground)',
+        primary: { DEFAULT: 'var(--primary)', foreground: 'var(--primary-foreground)' },
+        secondary: { DEFAULT: 'var(--secondary)', foreground: 'var(--secondary-foreground)' },
+        muted: { DEFAULT: 'var(--muted)', foreground: 'var(--muted-foreground)' },
+        accent: { DEFAULT: 'var(--accent)', foreground: 'var(--accent-foreground)' },
+        card: { DEFAULT: 'var(--card)', foreground: 'var(--card-foreground)' },
+        destructive: 'var(--destructive)'
+      },
+      borderRadius: {
+        lg: 'var(--radius)',
+        md: 'calc(var(--radius) - 2px)',
+        sm: 'calc(var(--radius) - 4px)'
+      },
+      fontFamily: {
+        sans: ['ui-sans-serif','system-ui','Segoe UI','Roboto','Inter','Arial','sans-serif']
+      }
+    }
+  }
+};
+</script>
+
+<style>
+  /* ===== ShadcnUI Neutral theme ===== */
+  :root {
+    --background: #ffffff;
+    --foreground: #0a0a0a;
+    --card: #ffffff;
+    --card-foreground: #0a0a0a;
+    --popover: #ffffff;
+    --popover-foreground: #0a0a0a;
+    --primary: #171717;
+    --primary-foreground: #fafafa;
+    --secondary: #f5f5f5;
+    --secondary-foreground: #171717;
+    --muted: #f5f5f5;
+    --muted-foreground: #737373;
+    --accent: #f5f5f5;
+    --accent-foreground: #171717;
+    --destructive: #e7000b;
+    --border: #e5e5e5;
+    --input: #e5e5e5;
+    --ring: #a1a1a1;
+    --radius: 0.625rem;
+  }
+
+  .dark {
+    --background: #0a0a0a;
+    --foreground: #fafafa;
+    --card: #171717;
+    --card-foreground: #fafafa;
+    --popover: #171717;
+    --popover-foreground: #fafafa;
+    --primary: #e5e5e5;
+    --primary-foreground: #171717;
+    --secondary: #262626;
+    --secondary-foreground: #fafafa;
+    --muted: #262626;
+    --muted-foreground: #a1a1a1;
+    --accent: #262626;
+    --accent-foreground: #fafafa;
+    --destructive: #ff6467;
+    --border: rgba(255,255,255,0.1);
+    --input: rgba(255,255,255,0.15);
+    --ring: #737373;
+  }
+
+  html, body { height: 100%; }
+  body { 
+    background-color: var(--background); 
+    color: var(--foreground); 
+    overflow-x: auto;
+  }
+
+  /* Убираем спиннеры у числовых полей */
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  input[type=number] { -moz-appearance: textfield; }
+
+  .invalid {
+    border-color: var(--destructive) !important;
+    background: color-mix(in srgb, var(--destructive) 8%, transparent) !important;
+  }
+
+  /* Фокус в стиле Shadcn */
+  .shadcn-focus:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--ring);
+    border-color: var(--ring);
+  }
+</style>
 </head>
-<body class="bg-gray-100 p-4">
-    <div class="flex-container max-w-6xl mx-auto w-full">
-        <!-- Основной контент -->
-        <div class="content-container bg-white rounded-lg shadow-sm flex flex-col">
-            <!-- Заголовок и формула -->
-            <div class="text-center py-3 mb-2">
-                <h1 class="text-xl font-bold text-gray-800">Конвертер RUB → ARS</h1>
-                <div id="formula-text" class="text-sm text-gray-600 mt-1 bg-gray-50 p-2 rounded-lg">
-                    Выберите ячейку для отображения расчета
-                </div>
-            </div>
 
-            <!-- Панель управления над таблицей -->
-            <div class="flex flex-wrap items-center gap-3 p-3 border-b border-gray-200 bg-gray-50">
-                <div class="flex items-center gap-2">
-                    <span class="text-xs font-medium text-gray-600">Песо</span>
-                    <button id="ars-up" class="w-6 h-6 flex items-center justify-center text-xs bg-white text-gray-600 border border-gray-300 hover:bg-gray-100" title="Сдвинуть диапазон песо вверх">
-                        <i class="fas fa-arrow-up"></i>
-                    </button>
-                    <button id="ars-down" class="w-6 h-6 flex items-center justify-center text-xs bg-white text-gray-600 border border-gray-300 hover:bg-gray-100" title="Сдвинуть диапазон песо вниз">
-                        <i class="fas fa-arrow-down"></i>
-                    </button>
-                </div>
-                
-                <div class="w-px h-6 bg-gray-300"></div>
-                
-                <div class="flex items-center gap-2">
-                    <span class="text-xs font-medium text-gray-600">Рубли</span>
-                    <button id="rub-left" class="w-6 h-6 flex items-center justify-center text-xs bg-white text-gray-600 border border-gray-300 hover:bg-gray-100" title="Сдвинуть диапазон рублей влево">
-                        <i class="fas fa-arrow-left"></i>
-                    </button>
-                    <button id="rub-right" class="w-6 h-6 flex items-center justify-center text-xs bg-white text-gray-600 border border-gray-300 hover:bg-gray-100" title="Сдвинуть диапазон рублей вправо">
-                        <i class="fas fa-arrow-right"></i>
-                    </button>
-                </div>
-            </div>
+<body class="min-h-screen font-sans antialiased text-[var(--foreground)]">
 
-            <!-- Область таблицы -->
-            <div class="table-wrapper">
-                <div class="table-scroll-area">
-                    <table id="conversion-table" class="w-full text-xs">
-                        <thead>
-                            <tr>
-                                <th class="sticky top-0 left-0 z-20 bg-white p-2 font-semibold text-center">ARS/RUB</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Данные будут сгенерированы скриптом -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+<main class="w-full max-w-[560px] min-w-[420px] mx-auto px-4 pt-12 pb-16">
+
+  <!-- ===== HEADER ===== -->
+  <header class="relative text-center mb-8 flex items-center justify-between px-1">
+    <!-- Кнопка сброса -->
+    <button id="resetBtn" type="button" title="Очистить сохранения"
+      class="w-9 h-9 rounded-md
+             bg-[var(--secondary)] text-[var(--secondary-foreground)]
+             border border-[var(--border)]
+             flex items-center justify-center
+             hover:bg-[var(--accent)] hover:text-[var(--destructive)] transition-colors">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+      </svg>
+    </button>
+
+    <h1 class="text-xl font-semibold tracking-tight absolute left-1/2 -translate-x-1/2">
+      Cross Exchange Course
+    </h1>
+
+    <!-- Кнопка темы -->
+    <button id="themeToggle" type="button" aria-label="Сменить тему"
+      class="w-9 h-9 rounded-md
+             bg-[var(--secondary)] text-[var(--secondary-foreground)]
+             border border-[var(--border)]
+             flex items-center justify-center
+             hover:bg-[var(--accent)] transition-colors">
+      <svg id="iconSun" style="display:none" class="w-4 h-4" fill="none" stroke="currentColor"
+           stroke-width="2" stroke-linecap="round" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="4"/>
+        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+      </svg>
+      <svg id="iconMoon" style="display:none" class="w-4 h-4" fill="none" stroke="currentColor"
+           stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+      </svg>
+    </button>
+  </header>
+
+  <!-- ===== CURRENCY PANEL ===== -->
+  <section class="rounded-lg border border-[var(--border)] bg-[var(--card)] p-3 mb-4">
+
+    <div class="flex items-center justify-between gap-2">
+
+      <!-- Currency 1 -->
+      <div class="flex-1 min-w-0 rounded-md border border-[var(--border)] bg-[var(--background)] p-2 flex flex-col justify-between">
+        <div class="text-[10px] font-medium text-[var(--muted-foreground)] uppercase tracking-wide truncate">
+          Валюта 1
         </div>
-
-        <!-- Панель настроек -->
-        <div class="controls-panel">
-            <div class="flex flex-wrap items-center justify-center gap-3">
-                <div class="flex items-center gap-2">
-                    <span class="text-xs text-gray-600">Шаг рубля:</span>
-                    <input type="number" id="rub-step-input" class="step-input border border-gray-300 rounded text-center text-sm" min="0.01" max="5" step="0.01" value="0.5">
-                </div>
-                
-                <div class="flex items-center gap-2">
-                    <span class="text-xs text-gray-600">Шаг песо:</span>
-                    <input type="number" id="ars-step-input" class="step-input border border-gray-300 rounded text-center text-sm" min="0.01" max="50" step="0.01" value="5">
-                </div>
-                
-                <button id="reset-view" class="text-xs py-1 px-3 bg-gray-50 border border-gray-300 rounded hover:bg-gray-100 flex items-center">
-                    <i class="fas fa-sync-alt mr-1"></i>Сбросить
-                </button>
-            </div>
+        
+        <input id="rateA" tabindex="1" autofocus inputmode="decimal" spellcheck="false" autocomplete="off"
+          class="shadcn-focus w-full min-w-0 mt-1 rounded-md
+                 bg-[var(--secondary)] border border-[var(--input)]
+                 px-2 py-1.5 text-sm font-semibold
+                 text-right tabular-nums outline-none transition-colors
+                 text-[var(--foreground)]">
+        
+        <div class="mt-2 pt-2 border-t border-[var(--border)]">
+          <input id="codeA" tabindex="4" maxlength="8" spellcheck="false" autocomplete="off"
+            class="w-full bg-transparent border-none outline-none
+                   text-sm font-bold uppercase tracking-wide
+                   placeholder:text-[var(--muted-foreground)]">
         </div>
+      </div>
+
+      <!-- Central Arrow & Swap -->
+      <div class="flex flex-col items-center justify-center shrink-0 gap-1.5 px-1">
+        <div class="text-[var(--muted-foreground)] text-base select-none">→</div>
+        <button id="swapBtn" type="button" title="Поменять местами"
+          class="w-7 h-6 rounded-md
+                 bg-[var(--secondary)] hover:bg-[var(--accent)]
+                 border border-[var(--border)]
+                 flex items-center justify-center
+                 text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M8 3L4 7l4 4"/>
+            <path d="M4 7h16"/>
+            <path d="M16 21l4-4-4-4"/>
+            <path d="M20 17H4"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Currency 2 -->
+      <div class="flex-1 min-w-0 rounded-md border border-[var(--border)] bg-[var(--background)] p-2 flex flex-col justify-between">
+        <div class="text-[10px] font-medium text-[var(--muted-foreground)] uppercase tracking-wide truncate">
+          Валюта 2
+        </div>
+        
+        <input id="rateB" tabindex="2" inputmode="decimal" spellcheck="false" autocomplete="off"
+          class="shadcn-focus w-full min-w-0 mt-1 rounded-md
+                 bg-[var(--secondary)] border border-[var(--input)]
+                 px-2 py-1.5 text-sm font-semibold
+                 text-right tabular-nums outline-none transition-colors
+                 text-[var(--foreground)]">
+        
+        <div class="mt-2 pt-2 border-t border-[var(--border)]">
+          <input id="codeB" tabindex="5" maxlength="8" spellcheck="false" autocomplete="off"
+            class="w-full bg-transparent border-none outline-none
+                   text-sm font-bold uppercase tracking-wide
+                   placeholder:text-[var(--muted-foreground)]">
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===== RESULT PANEL ===== -->
+  <section class="rounded-lg border border-[var(--border)] bg-[var(--card)] p-3">
+
+    <div class="grid grid-cols-2 gap-3 items-end">
+
+      <!-- Left: amount input -->
+      <div class="min-w-0">
+        <label class="block text-[11px] font-medium text-[var(--muted-foreground)] mb-1">
+          Сумма
+        </label>
+        <div class="flex items-center rounded-md
+                    bg-[var(--background)] border border-[var(--input)]
+                    px-3 py-2
+                    focus-within:ring-1 focus-within:ring-[var(--ring)]">
+          <input id="amount" tabindex="3" value="1" inputmode="decimal" spellcheck="false" autocomplete="off"
+            class="w-full min-w-0 bg-transparent border-none outline-none
+                   text-lg font-semibold tabular-nums
+                   text-[var(--foreground)]">
+        </div>
+      </div>
+
+      <!-- Right: result -->
+      <div class="min-w-0">
+        <div class="block text-[11px] font-medium text-[var(--muted-foreground)] mb-1">
+          Результат
+        </div>
+        <div class="flex items-center justify-end rounded-md 
+                    bg-[var(--secondary)] border border-[var(--border)]
+                    px-3 py-2">
+          <div id="resultValue"
+            class="w-full text-lg font-bold tabular-nums truncate
+                   text-[var(--foreground)] text-right">—</div>
+        </div>
+      </div>
+
     </div>
 
-    <script>
-        // Начальные диапазоны
-        let rubStart = 77.0;
-        let arsStart = 1190;
-        
-        // Шаги изменения
-        let rubStep = 0.5;
-        let arsStep = 5;
-        
-        // Текущие значения для подсветки
-        let currentRub = 80.0;
-        let currentArs = 1200;
-        
-        // Размеры таблицы (будут рассчитаны динамически)
-        let rubCount, arsCount;
-        
-        // Функция для интеллектуального форматирования чисел
-        function formatNumber(value, step) {
-            // Для шагов >= 1 отображаем как целые числа
-            if (step >= 1) {
-                return Math.round(value).toString();
-            }
-            // Для шагов < 1 отображаем с 2 знаками после запятой
-            return value.toFixed(2);
-        }
-        
-        // Расчет оптимального размера таблицы
-        function calculateTableSize() {
-            const container = document.querySelector('.table-wrapper');
-            if (!container) return { rubCount: 10, arsCount: 10 };
-            
-            // Ориентировочные размеры ячеек
-            const cellWidth = 70;  // px
-            const cellHeight = 30; // px
-            
-            // Доступные размеры
-            const availableWidth = container.clientWidth - 100; // минус первый столбец
-            const availableHeight = container.clientHeight;
-            
-            // Рассчитываем количество ячеек
-            const horizontalCells = Math.max(5, Math.floor(availableWidth / cellWidth));
-            const verticalCells = Math.max(5, Math.floor(availableHeight / cellHeight));
-            
-            return {
-                rubCount: Math.min(20, horizontalCells),
-                arsCount: Math.min(50, verticalCells)
-            };
-        }
-        
-        // Инициализация таблицы
-        function initTable() {
-            const sizes = calculateTableSize();
-            rubCount = sizes.rubCount;
-            arsCount = sizes.arsCount;
-            
-            renderTable();
-            updateFormula();
-            updateStepInputs();
-        }
-        
-        // Обновление полей ввода шагов
-        function updateStepInputs() {
-            document.getElementById('rub-step-input').value = rubStep;
-            document.getElementById('ars-step-input').value = arsStep;
-        }
-        
-        // Обновление формулы расчета
-        function updateFormula() {
-            const result = (currentArs / currentRub).toFixed(2);
-            const formula = `${formatNumber(currentArs, arsStep)} ARS/USD ÷ ${formatNumber(currentRub, rubStep)} RUB/USD = <span class="font-semibold">${result} ARS/RUB</span>`;
-            document.getElementById('formula-text').innerHTML = formula;
-        }
-        
-        // Генерация таблицы
-        function renderTable() {
-            const table = document.getElementById('conversion-table');
-            const tbody = table.querySelector('tbody');
-            const headerRow = table.querySelector('thead tr');
-            
-            // Очищаем таблицу
-            tbody.innerHTML = '';
-            while (headerRow.children.length > 1) {
-                headerRow.removeChild(headerRow.lastChild);
-            }
-            
-            // Заголовки для рублей
-            for (let i = 0; i < rubCount; i++) {
-                const rubValue = rubStart + i * rubStep;
-                const th = document.createElement('th');
-                th.className = 'sticky top-0 p-2 bg-gray-100 font-semibold text-center';
-                th.textContent = formatNumber(rubValue, rubStep);
-                th.title = `Курс рубля: ${rubValue.toFixed(4)} RUB за 1 USD`;
-                headerRow.appendChild(th);
-            }
-            
-            // Строки для песо
-            for (let i = 0; i < arsCount; i++) {
-                const arsValue = arsStart + i * arsStep;
-                const tr = document.createElement('tr');
-                
-                // Ячейка с песо (форматируем в зависимости от шага)
-                const arsCell = document.createElement('th');
-                arsCell.className = 'p-2 font-medium text-center';
-                arsCell.textContent = formatNumber(arsValue, arsStep);
-                arsCell.title = `Курс песо: ${arsValue.toFixed(4)} ARS за 1 USD`;
-                tr.appendChild(arsCell);
-                
-                // Ячейки с курсами (всегда 2 знака после запятой)
-                for (let j = 0; j < rubCount; j++) {
-                    const rubValue = rubStart + j * rubStep;
-                    const result = (arsValue / rubValue).toFixed(2);
-                    
-                    const td = document.createElement('td');
-                    td.className = 'p-2 text-center';
-                    td.textContent = result;
-                    td.title = `${arsValue.toFixed(2)} ARS/USD / ${rubValue.toFixed(2)} RUB/USD = ${result} ARS/RUB`;
-                    
-                    // Подсветка текущих значений
-                    if (Math.abs(rubValue - currentRub) < rubStep/2 && 
-                        Math.abs(arsValue - currentArs) < arsStep/2) {
-                        td.classList.add('highlight');
-                    }
-                    
-                    // Обновление при наведении
-                    td.addEventListener('mouseenter', () => {
-                        currentRub = rubValue;
-                        currentArs = arsValue;
-                        updateFormula();
-                        
-                        // Сброс предыдущей подсветки
-                        document.querySelectorAll('.highlight').forEach(el => {
-                            el.classList.remove('highlight');
-                        });
-                        
-                        // Установка новой подсветки
-                        td.classList.add('highlight');
-                    });
-                    
-                    tr.appendChild(td);
-                }
-                
-                tbody.appendChild(tr);
-            }
-        }
-        
-        // Обработчики кнопок управления
-        document.getElementById('rub-left').addEventListener('click', () => {
-            rubStart -= rubStep;
-            renderTable();
-        });
-        
-        document.getElementById('rub-right').addEventListener('click', () => {
-            rubStart += rubStep;
-            renderTable();
-        });
-        
-        document.getElementById('ars-up').addEventListener('click', () => {
-            arsStart -= arsStep;
-            renderTable();
-        });
-        
-        document.getElementById('ars-down').addEventListener('click', () => {
-            arsStart += arsStep;
-            renderTable();
-        });
-        
-        // Автоматическое применение шага для рубля
-        document.getElementById('rub-step-input').addEventListener('change', function() {
-            const newStep = parseFloat(this.value);
-            if (newStep >= 0.01 && newStep <= 5) {
-                rubStep = newStep;
-                renderTable();
-            } else {
-                alert("Пожалуйста, введите корректное значение шага для рубля (от 0.01 до 5)");
-                this.value = rubStep;
-            }
-        });
-        
-        // Автоматическое применение шага для песо
-        document.getElementById('ars-step-input').addEventListener('change', function() {
-            const newStep = parseFloat(this.value);
-            if (newStep >= 0.01 && newStep <= 50) {
-                arsStep = newStep;
-                renderTable();
-            } else {
-                alert("Пожалуйста, введите корректное значение шага для песо (от 0.01 до 50)");
-                this.value = arsStep;
-            }
-        });
-        
-        // Обработчик сброса
-        document.getElementById('reset-view').addEventListener('click', () => {
-            rubStart = 77.0;
-            arsStart = 1190;
-            rubStep = 0.5;
-            arsStep = 5;
-            currentRub = 80.0;
-            currentArs = 1200;
-            updateStepInputs();
-            renderTable();
-        });
-        
-        // Инициализация при загрузке
-        document.addEventListener('DOMContentLoaded', initTable);
-        
-        // Обновление при изменении размеров окна
-        window.addEventListener('resize', initTable);
-    </script>
+    <!-- cross rate: всегда видим, просто пустой если нет данных -->
+    <div id="crossLine"
+      class="mt-2 pt-2 border-t border-[var(--border)]
+             text-xs text-[var(--muted-foreground)]
+             text-center leading-relaxed min-h-[28px]">&nbsp;</div>
+
+  </section>
+</main>
+
+<script>
+(function () {
+  'use strict';
+
+  const LS_DATA  = 'cross-exchange-data';
+  const LS_THEME = 'cross-exchange-theme';
+  
+  const $ = (id) => document.getElementById(id);
+
+  const els = {
+    codeA:  $('codeA'),
+    rateA:  $('rateA'),
+    codeB:  $('codeB'),
+    rateB:  $('rateB'),
+    amount: $('amount')
+  };
+  const KEYS = Object.keys(els);
+
+  /* ===== ТЕМА ===== */
+  function applyTheme() {
+    const isDark = document.documentElement.classList.contains('dark');
+    $('iconSun').style.display  = isDark ? '' : 'none';
+    $('iconMoon').style.display = isDark ? 'none' : '';
+  }
+
+  $('themeToggle').addEventListener('click', () => {
+    const isDark = document.documentElement.classList.toggle('dark');
+    try { localStorage.setItem(LS_THEME, isDark ? 'dark' : 'light'); } catch (e) {}
+    applyTheme();
+  });
+
+  applyTheme();
+
+  /* ===== СОХРАНЕНИЕ И ЗАГРУЗКА ===== */
+  function saveData() {
+    const data = {};
+    KEYS.forEach(k => data[k] = els[k].value);
+    try { localStorage.setItem(LS_DATA, JSON.stringify(data)); } catch (e) {}
+  }
+
+  function loadData() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(LS_DATA) || '{}');
+      KEYS.forEach(k => {
+        if (saved[k] != null) els[k].value = saved[k];
+      });
+    } catch (e) {}
+  }
+
+  loadData();
+
+  /* ===== СБРОС ===== */
+  $('resetBtn').addEventListener('click', () => {
+    els.codeA.value = '';
+    els.rateA.value = '';
+    els.codeB.value = '';
+    els.rateB.value = '';
+    els.amount.value = '1';
+    
+    try { localStorage.removeItem(LS_DATA); } catch (e) {}
+    
+    render();
+  });
+
+  /* ===== ХЕЛПЕРЫ ===== */
+  function parseNum(str) {
+    if (typeof str !== 'string') return NaN;
+    const v = parseFloat(str.replace(/\s/g, '').replace(',', '.'));
+    return Number.isFinite(v) ? v : NaN;
+  }
+
+  function fmt(n, maxDec) {
+    if (!Number.isFinite(n)) return '—';
+    const abs = Math.abs(n);
+    let dec = maxDec;
+    if (dec == null) {
+      if (abs === 0)        dec = 2;
+      else if (abs >= 1000) dec = 2;
+      else if (abs >= 1)    dec = 4;
+      else if (abs >= 0.01) dec = 6;
+      else                  dec = 8;
+    }
+    return new Intl.NumberFormat('ru-RU', {
+      maximumFractionDigits: dec,
+      minimumFractionDigits: 0
+    }).format(n);
+  }
+
+  /* ===== РЕНДЕР ===== */
+  function render() {
+    const nameA = els.codeA.value.trim().toUpperCase();
+    const nameB = els.codeB.value.trim().toUpperCase();
+
+    const rA  = parseNum(els.rateA.value);
+    const rB  = parseNum(els.rateB.value);
+    const amt = parseNum(els.amount.value);
+
+    const pos  = v => Number.isFinite(v) && v > 0;
+    const okA  = pos(rA);
+    const okB  = pos(rB);
+    const okAm = Number.isFinite(amt) && amt >= 0;
+
+    const emptyA = els.rateA.value.trim() === '';
+    const emptyB = els.rateB.value.trim() === '';
+    const emptyAm = els.amount.value.trim() === '';
+
+    els.rateA.classList.toggle('invalid', !emptyA && !okA);
+    els.rateB.classList.toggle('invalid', !emptyB && !okB);
+    els.amount.classList.toggle('invalid', !emptyAm && !okAm);
+
+    // Если данных нет, делаем пустую строку, чтобы не дёргался интерфейс (высота сохраняется)
+    if (!(okA && okB && okAm)) {
+      $('resultValue').textContent = '—';
+      $('crossLine').innerHTML = '&nbsp;';
+      return;
+    }
+
+    const inCore = amt / rA;
+    const out    = inCore * rB;
+    const cross  = rB / rA;
+
+    $('resultValue').textContent = fmt(out);
+    
+    let cur1 = '', cur2 = '', val = 0;
+    if (cross >= 1) {
+      val = cross;
+      cur1 = nameA;
+      cur2 = nameB;
+    } else {
+      val = 1 / cross;
+      cur1 = nameB;
+      cur2 = nameA;
+    }
+
+    const leftStr = '1' + (cur1 ? ' ' + cur1 : '');
+    const rightStr = '<b class="font-semibold tabular-nums text-[var(--foreground)]">' + fmt(val) + '</b>' + (cur2 ? ' ' + cur2 : '');
+
+    $('crossLine').innerHTML = 'Кросс-курс: ' + leftStr + ' = ' + rightStr;
+  }
+
+  /* ===== СОБЫТИЯ ===== */
+  KEYS.forEach(k => {
+    els[k].addEventListener('input', () => { 
+      render(); 
+      saveData();
+    });
+  });
+
+  $('swapBtn').addEventListener('click', () => {
+    const cA = els.codeA.value, rA = els.rateA.value;
+    els.codeA.value = els.codeB.value;
+    els.rateA.value = els.rateB.value;
+    els.codeB.value = cA;
+    els.rateB.value = rA;
+    render();
+    saveData();
+  });
+
+  render();
+})();
+</script>
 </body>
 </html>
