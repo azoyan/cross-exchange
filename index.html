@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="ru" class="dark">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Cross Exchange Course</title>
 
 <script>
@@ -92,11 +93,19 @@ tailwind.config = {
     --ring: #737373;
   }
 
-  html, body { height: 100%; }
+  html, body { 
+    height: 100%; 
+    margin: 0;
+    padding: 0;
+  }
+  
   body { 
     background-color: var(--background); 
     color: var(--foreground); 
-    overflow-x: auto;
+    min-height: 100dvh; 
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
   }
 
   /* Убираем спиннеры у числовых полей */
@@ -117,136 +126,127 @@ tailwind.config = {
   }
 
   /* Убираем эффект выделения текста при частых тапах по кнопкам */
-  .mobile-step-btn {
+  .step-btn {
     -webkit-tap-highlight-color: transparent;
     user-select: none;
   }
 </style>
 </head>
 
-<body class="min-h-screen font-sans antialiased text-[var(--foreground)]">
+<body class="font-sans antialiased text-[var(--foreground)] flex flex-col items-center">
 
-<main class="w-full max-w-[560px] min-w-[420px] mx-auto px-4 pt-12 pb-16">
+<main class="w-full max-w-[560px] px-4 pt-8 pb-12 md:pt-12 md:pb-16">
 
   <!-- ===== HEADER ===== -->
-  <header class="relative text-center mb-8 flex items-center justify-between px-1">
-    <!-- Кнопка сброса -->
-    <button id="resetBtn" type="button" title="Очистить сохранения"
-      class="w-9 h-9 rounded-md
-             bg-[var(--secondary)] text-[var(--secondary-foreground)]
-             border border-[var(--border)]
-             flex items-center justify-center
-             hover:bg-[var(--accent)] hover:text-[var(--destructive)] transition-colors">
-      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-      </svg>
-    </button>
-
+  <header class="relative text-center mb-8 flex items-center justify-end px-1">
     <h1 class="text-xl font-semibold tracking-tight absolute left-1/2 -translate-x-1/2">
       Cross Exchange Course
     </h1>
 
-    <!-- Кнопка темы -->
-    <button id="themeToggle" type="button" aria-label="Сменить тему"
-      class="w-9 h-9 rounded-md
-             bg-[var(--secondary)] text-[var(--secondary-foreground)]
-             border border-[var(--border)]
-             flex items-center justify-center
-             hover:bg-[var(--accent)] transition-colors">
-      <svg id="iconSun" style="display:none" class="w-4 h-4" fill="none" stroke="currentColor"
-           stroke-width="2" stroke-linecap="round" viewBox="0 0 24 24">
-        <circle cx="12" cy="12" r="4"/>
-        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
-      </svg>
-      <svg id="iconMoon" style="display:none" class="w-4 h-4" fill="none" stroke="currentColor"
-           stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-      </svg>
-    </button>
+    <div class="flex items-center gap-2">
+      <!-- Кнопка сброса -->
+      <button id="resetBtn" type="button" title="Очистить сохранения"
+        class="w-9 h-9 rounded-md
+               bg-[var(--secondary)] text-[var(--secondary-foreground)]
+               border border-[var(--border)]
+               flex items-center justify-center
+               hover:bg-[var(--accent)] hover:text-[var(--destructive)] transition-colors">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+        </svg>
+      </button>
+
+      <!-- Кнопка темы -->
+      <button id="themeToggle" type="button" aria-label="Сменить тему"
+        class="w-9 h-9 rounded-md
+               bg-[var(--secondary)] text-[var(--secondary-foreground)]
+               border border-[var(--border)]
+               flex items-center justify-center
+               hover:bg-[var(--accent)] transition-colors">
+        <svg id="iconSun" style="display:none" class="w-4 h-4" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="4"/>
+          <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+        </svg>
+        <svg id="iconMoon" style="display:none" class="w-4 h-4" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </button>
+    </div>
   </header>
 
   <!-- ===== CURRENCY PANEL ===== -->
-  <section class="rounded-lg border border-[var(--border)] bg-[var(--card)] p-3 mb-4">
+  <section class="rounded-lg border border-[var(--border)] bg-[var(--card)] p-4 mb-4">
+    
+    <div class="grid grid-cols-[1fr_auto_1fr] gap-x-3 gap-y-2 items-center">
 
-    <div class="flex items-center justify-between gap-2">
+      <!-- 1 ряд: Лейблы (выровнены по левому краю) и пустая ячейка для Swap -->
+      <div class="text-[10px] font-medium text-[var(--muted-foreground)] uppercase tracking-wide truncate pl-1">
+        Валюта 1
+      </div>
+      <div class="w-10"></div>
+      <div class="text-[10px] font-medium text-[var(--muted-foreground)] uppercase tracking-wide truncate pl-1">
+        Валюта 2
+      </div>
 
-      <!-- Currency 1 -->
-      <div class="flex-1 min-w-0 rounded-md border border-[var(--border)] bg-[var(--background)] p-2 flex flex-col justify-between">
-        <div class="text-[10px] font-medium text-[var(--muted-foreground)] uppercase tracking-wide truncate">
-          Валюта 1
-        </div>
+      <!-- 2 ряд: Инпуты и кнопка Swap -->
+      <div class="flex items-center gap-1.5 h-10">
+        <input id="rateA" tabindex="1" autofocus inputmode="decimal" spellcheck="false" autocomplete="off"
+          class="shadcn-focus flex-1 w-full min-w-0 rounded-md h-10
+                 bg-[var(--background)] border border-[var(--input)]
+                 px-2 text-lg font-semibold
+                 text-right tabular-nums outline-none transition-colors
+                 text-[var(--foreground)]">
         
-        <div class="mt-1 flex items-center gap-1">
-          <input id="rateA" tabindex="1" autofocus inputmode="decimal" spellcheck="false" autocomplete="off"
-            class="shadcn-focus flex-1 w-full min-w-0 rounded-md
-                   bg-[var(--secondary)] border border-[var(--input)]
-                   px-2 py-1.5 text-sm font-semibold
-                   text-right tabular-nums outline-none transition-colors
-                   text-[var(--foreground)]">
-          
-          <!-- Мобильные стрелки для Валюты 1 -->
-          <div class="flex flex-col md:hidden">
-            <button type="button" data-target="rateA" data-dir="1" 
-              class="mobile-step-btn w-5 h-4 flex items-center justify-center rounded text-[9px] text-[var(--muted-foreground)] hover:bg-[var(--accent)] active:bg-[var(--border)] transition-colors">▲</button>
-            <button type="button" data-target="rateA" data-dir="-1" 
-              class="mobile-step-btn w-5 h-4 flex items-center justify-center rounded text-[9px] text-[var(--muted-foreground)] hover:bg-[var(--accent)] active:bg-[var(--border)] transition-colors">▼</button>
-          </div>
-        </div>
-        
-        <div class="mt-2 pt-2 border-t border-[var(--border)]">
-          <input id="codeA" tabindex="4" maxlength="8" spellcheck="false" autocomplete="off"
-            class="w-full bg-transparent border-none outline-none
-                   text-sm font-bold uppercase tracking-wide
-                   placeholder:text-[var(--muted-foreground)]">
+        <div class="flex flex-col gap-[2px] justify-between h-10 shrink-0">
+          <button type="button" tabindex="-1" data-target="rateA" data-dir="1" 
+            class="step-btn w-6 h-[19px] flex items-center justify-center rounded
+                   bg-[var(--background)] border border-[var(--input)]
+                   text-[10px] font-bold text-[var(--muted-foreground)] 
+                   hover:bg-[var(--accent)] hover:text-[var(--foreground)] 
+                   active:scale-95 transition-all">▲</button>
+          <button type="button" tabindex="-1" data-target="rateA" data-dir="-1" 
+            class="step-btn w-6 h-[19px] flex items-center justify-center rounded
+                   bg-[var(--background)] border border-[var(--input)]
+                   text-[10px] font-bold text-[var(--muted-foreground)] 
+                   hover:bg-[var(--accent)] hover:text-[var(--foreground)] 
+                   active:scale-95 transition-all">▼</button>
         </div>
       </div>
 
-      <!-- Central Arrow & Swap -->
-      <div class="flex flex-col items-center justify-center shrink-0 gap-1.5 px-1">
-        <div class="text-[var(--muted-foreground)] text-base select-none">→</div>
-        <button id="swapBtn" type="button" title="Поменять местами"
-          class="w-7 h-6 rounded-md
-                 bg-[var(--secondary)] hover:bg-[var(--accent)]
-                 border border-[var(--border)]
-                 flex items-center justify-center
-                 text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M8 3L4 7l4 4"/>
-            <path d="M4 7h16"/>
-            <path d="M16 21l4-4-4-4"/>
-            <path d="M20 17H4"/>
-          </svg>
-        </button>
-      </div>
+      <!-- Кнопка Swap по центру -->
+      <button id="swapBtn" type="button" title="Поменять местами"
+        class="w-10 h-10 rounded-md bg-[var(--secondary)] hover:bg-[var(--accent)] border border-[var(--border)] flex items-center justify-center text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors mx-0.5">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M8 3L4 7l4 4"/>
+          <path d="M4 7h16"/>
+          <path d="M16 21l4-4-4-4"/>
+          <path d="M20 17H4"/>
+        </svg>
+      </button>
 
-      <!-- Currency 2 -->
-      <div class="flex-1 min-w-0 rounded-md border border-[var(--border)] bg-[var(--background)] p-2 flex flex-col justify-between">
-        <div class="text-[10px] font-medium text-[var(--muted-foreground)] uppercase tracking-wide truncate">
-          Валюта 2
-        </div>
+      <div class="flex items-center gap-1.5 h-10">
+        <input id="rateB" tabindex="2" inputmode="decimal" spellcheck="false" autocomplete="off"
+          class="shadcn-focus flex-1 w-full min-w-0 rounded-md h-10
+                 bg-[var(--background)] border border-[var(--input)]
+                 px-2 text-lg font-semibold
+                 text-right tabular-nums outline-none transition-colors
+                 text-[var(--foreground)]">
         
-        <div class="mt-1 flex items-center gap-1">
-          <input id="rateB" tabindex="2" inputmode="decimal" spellcheck="false" autocomplete="off"
-            class="shadcn-focus flex-1 w-full min-w-0 rounded-md
-                   bg-[var(--secondary)] border border-[var(--input)]
-                   px-2 py-1.5 text-sm font-semibold
-                   text-right tabular-nums outline-none transition-colors
-                   text-[var(--foreground)]">
-          
-          <!-- Мобильные стрелки для Валюты 2 -->
-          <div class="flex flex-col md:hidden">
-            <button type="button" data-target="rateB" data-dir="1" 
-              class="mobile-step-btn w-5 h-4 flex items-center justify-center rounded text-[9px] text-[var(--muted-foreground)] hover:bg-[var(--accent)] active:bg-[var(--border)] transition-colors">▲</button>
-            <button type="button" data-target="rateB" data-dir="-1" 
-              class="mobile-step-btn w-5 h-4 flex items-center justify-center rounded text-[9px] text-[var(--muted-foreground)] hover:bg-[var(--accent)] active:bg-[var(--border)] transition-colors">▼</button>
-          </div>
-        </div>
-        
-        <div class="mt-2 pt-2 border-t border-[var(--border)]">
-          <input id="codeB" tabindex="5" maxlength="8" spellcheck="false" autocomplete="off"
-            class="w-full bg-transparent border-none outline-none
-                   text-sm font-bold uppercase tracking-wide
-                   placeholder:text-[var(--muted-foreground)]">
+        <div class="flex flex-col gap-[2px] justify-between h-10 shrink-0">
+          <button type="button" tabindex="-1" data-target="rateB" data-dir="1" 
+            class="step-btn w-6 h-[19px] flex items-center justify-center rounded
+                   bg-[var(--background)] border border-[var(--input)]
+                   text-[10px] font-bold text-[var(--muted-foreground)] 
+                   hover:bg-[var(--accent)] hover:text-[var(--foreground)] 
+                   active:scale-95 transition-all">▲</button>
+          <button type="button" tabindex="-1" data-target="rateB" data-dir="-1" 
+            class="step-btn w-6 h-[19px] flex items-center justify-center rounded
+                   bg-[var(--background)] border border-[var(--input)]
+                   text-[10px] font-bold text-[var(--muted-foreground)] 
+                   hover:bg-[var(--accent)] hover:text-[var(--foreground)] 
+                   active:scale-95 transition-all">▼</button>
         </div>
       </div>
 
@@ -254,37 +254,34 @@ tailwind.config = {
   </section>
 
   <!-- ===== RESULT PANEL ===== -->
-  <section class="rounded-lg border border-[var(--border)] bg-[var(--card)] p-3">
+  <section class="rounded-lg border border-[var(--border)] bg-[var(--card)] p-4">
 
     <div class="grid grid-cols-2 gap-3 items-end">
 
       <!-- Left: amount input -->
       <div class="min-w-0">
-        <label class="block text-[11px] font-medium text-[var(--muted-foreground)] mb-1">
+        <!-- Лейбл приведен к единому стилю с валютами -->
+        <label class="block text-[10px] font-medium text-[var(--muted-foreground)] uppercase tracking-wide mb-1.5 pl-1">
           Сумма
         </label>
-        <div class="flex items-center rounded-md
-                    bg-[var(--background)] border border-[var(--input)]
-                    px-3 py-2
-                    focus-within:ring-1 focus-within:ring-[var(--ring)]">
-          <input id="amount" tabindex="3" value="1" inputmode="decimal" spellcheck="false" autocomplete="off"
-            class="w-full min-w-0 bg-transparent border-none outline-none
-                   text-lg font-semibold tabular-nums
-                   text-[var(--foreground)]">
-        </div>
+        <input id="amount" tabindex="3" value="1" inputmode="decimal" spellcheck="false" autocomplete="off"
+          class="shadcn-focus w-full h-10 rounded-md 
+                 bg-[var(--background)] border border-[var(--input)] px-3 outline-none
+                 text-lg font-semibold tabular-nums
+                 text-[var(--foreground)]">
       </div>
 
       <!-- Right: result -->
       <div class="min-w-0">
-        <div class="block text-[11px] font-medium text-[var(--muted-foreground)] mb-1">
+        <!-- Лейбл приведен к единому стилю с валютами -->
+        <div class="block text-[10px] font-medium text-[var(--muted-foreground)] uppercase tracking-wide mb-1.5 pl-1">
           Результат
         </div>
-        <div class="flex items-center justify-end rounded-md 
-                    bg-[var(--secondary)] border border-[var(--border)]
-                    px-3 py-2">
+        <div class="flex items-center justify-end w-full h-10 rounded-md 
+                    bg-[var(--secondary)] border border-[var(--border)] px-3">
           <div id="resultValue"
             class="w-full text-lg font-bold tabular-nums truncate
-                   text-[var(--foreground)] text-right">—</div>
+                   text-[var(--foreground)] text-right"></div>
         </div>
       </div>
 
@@ -292,7 +289,7 @@ tailwind.config = {
 
     <!-- cross rate: всегда видим -->
     <div id="crossLine"
-      class="mt-2 pt-2 border-t border-[var(--border)]
+      class="mt-3 pt-3 border-t border-[var(--border)]
              text-xs text-[var(--muted-foreground)]
              text-center leading-relaxed min-h-[28px]">&nbsp;</div>
 
@@ -303,15 +300,13 @@ tailwind.config = {
 (function () {
   'use strict';
 
-  const LS_DATA  = 'cross-exchange-data';
+  const LS_DATA  = 'cross-exchange-data-v2';
   const LS_THEME = 'cross-exchange-theme';
   
   const $ = (id) => document.getElementById(id);
 
   const els = {
-    codeA:  $('codeA'),
     rateA:  $('rateA'),
-    codeB:  $('codeB'),
     rateB:  $('rateB'),
     amount: $('amount')
   };
@@ -352,9 +347,7 @@ tailwind.config = {
 
   /* ===== СБРОС ===== */
   $('resetBtn').addEventListener('click', () => {
-    els.codeA.value = '';
     els.rateA.value = '';
-    els.codeB.value = '';
     els.rateB.value = '';
     els.amount.value = '1';
     
@@ -371,7 +364,7 @@ tailwind.config = {
   }
 
   function fmt(n, maxDec) {
-    if (!Number.isFinite(n)) return '—';
+    if (!Number.isFinite(n)) return '';
     const abs = Math.abs(n);
     let dec = maxDec;
     if (dec == null) {
@@ -396,7 +389,6 @@ tailwind.config = {
     const abs = Math.abs(current);
     let step = 1;
 
-    // Определяем шаг
     if (abs < 10) {
       step = 0.01;
     } else if (abs < 100) {
@@ -412,7 +404,6 @@ tailwind.config = {
     let nextValue = current + (step * direction);
     if (nextValue < 0) nextValue = 0;
 
-    // Сохраняем дробную часть
     const parts = current.toString().split('.');
     const currentDecimals = parts.length > 1 ? parts[1].length : 0;
     
@@ -422,7 +413,6 @@ tailwind.config = {
       precision = Math.max(currentDecimals, stepPrecision);
     }
 
-    // Округляем до нужной точности, чтобы убрать ошибки плавающей точки
     const rounded = parseFloat(nextValue.toFixed(precision));
     input.value = rounded.toString();
 
@@ -435,12 +425,10 @@ tailwind.config = {
     stepValue(e.target, e.key === 'ArrowUp' ? 1 : -1);
   }
 
-  // Вешаем обработчики на поля курсов (для клавиатуры)
   els.rateA.addEventListener('keydown', handleArrowKeys);
   els.rateB.addEventListener('keydown', handleArrowKeys);
 
-  // Вешаем обработчики на мобильные кнопки
-  document.querySelectorAll('.mobile-step-btn').forEach(btn => {
+  document.querySelectorAll('.step-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
       const targetId = btn.getAttribute('data-target');
@@ -451,9 +439,6 @@ tailwind.config = {
 
   /* ===== РЕНДЕР ===== */
   function render() {
-    const nameA = els.codeA.value.trim().toUpperCase();
-    const nameB = els.codeB.value.trim().toUpperCase();
-
     const rA  = parseNum(els.rateA.value);
     const rB  = parseNum(els.rateB.value);
     const amt = parseNum(els.amount.value);
@@ -472,7 +457,7 @@ tailwind.config = {
     els.amount.classList.toggle('invalid', !emptyAm && !okAm);
 
     if (!(okA && okB && okAm)) {
-      $('resultValue').textContent = '—';
+      $('resultValue').textContent = '';
       $('crossLine').innerHTML = '&nbsp;';
       return;
     }
@@ -483,21 +468,14 @@ tailwind.config = {
 
     $('resultValue').textContent = fmt(out);
     
-    let cur1 = '', cur2 = '', val = 0;
+    let val = 0;
     if (cross >= 1) {
       val = cross;
-      cur1 = nameA;
-      cur2 = nameB;
     } else {
       val = 1 / cross;
-      cur1 = nameB;
-      cur2 = nameA;
     }
 
-    const leftStr = '1' + (cur1 ? ' ' + cur1 : '');
-    const rightStr = '<b class="font-semibold tabular-nums text-[var(--foreground)]">' + fmt(val) + '</b>' + (cur2 ? ' ' + cur2 : '');
-
-    $('crossLine').innerHTML = 'Кросс-курс: ' + leftStr + ' = ' + rightStr;
+    $('crossLine').innerHTML = 'Кросс-курс: 1 = <b class="font-semibold tabular-nums text-[var(--foreground)]">' + fmt(val) + '</b>';
   }
 
   /* ===== СОБЫТИЯ ===== */
@@ -509,10 +487,8 @@ tailwind.config = {
   });
 
   $('swapBtn').addEventListener('click', () => {
-    const cA = els.codeA.value, rA = els.rateA.value;
-    els.codeA.value = els.codeB.value;
+    const rA = els.rateA.value;
     els.rateA.value = els.rateB.value;
-    els.codeB.value = cA;
     els.rateB.value = rA;
     render();
     saveData();
