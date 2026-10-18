@@ -137,10 +137,33 @@ tailwind.config = {
 
 <main class="w-full max-w-[560px] px-4 pt-6 pb-12 md:pt-10 md:pb-16">
 
-  <!-- ===== HEADER (Только кнопки) ===== -->
-  <header class="relative flex items-center justify-end px-1 mb-4">
+  <!-- ===== HEADER ===== -->
+  <header class="relative flex items-center justify-between px-1 mb-4">
+    
+    <!-- Иконка-логотип слева -->
+    <div class="flex items-center pl-1">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 84 40" class="h-10 w-auto drop-shadow-sm">
+        <!-- 1. ЛЕВЫЙ СЛОЙ: Рубль -->
+        <g transform="translate(20, 20)">
+          <circle cx="0" cy="0" r="18" fill="#CA3B3B" />
+          <text x="0" y="6" font-family="system-ui, sans-serif" font-size="18" font-weight="700" fill="#FFFFFF" text-anchor="middle">₽</text>
+        </g>
+        <!-- 2. СРЕДНИЙ СЛОЙ: Доллар (Черный) -->
+        <g transform="translate(42, 20)">
+          <circle cx="0" cy="0" r="18" fill="#1E293B" />
+          <text x="0" y="7" font-family="system-ui, sans-serif" font-size="20" font-weight="700" fill="#FFFFFF" text-anchor="middle">$</text>
+        </g>
+        <!-- 3. ПРАВЫЙ СЛОЙ: Тугрик -->
+        <g transform="translate(64, 20)">
+          <circle cx="0" cy="0" r="18" fill="#0FA473" />
+          <text x="0" y="6" font-family="system-ui, sans-serif" font-size="19" font-weight="700" fill="#FFFFFF" text-anchor="middle">₮</text>
+        </g>
+      </svg>
+    </div>
+
+    <!-- Кнопки справа -->
     <div class="flex items-center gap-2">
-      <!-- Кнопка сброса (стандартная иконка Eraser из Lucide) -->
+      <!-- Кнопка сброса (Eraser) -->
       <button id="resetBtn" type="button" title="Очистить сохранения"
         class="w-9 h-9 rounded-md
                bg-[var(--secondary)] text-[var(--secondary-foreground)]
@@ -179,7 +202,7 @@ tailwind.config = {
     
     <div class="grid grid-cols-[1fr_auto_1fr] gap-x-3 gap-y-2 items-center">
 
-      <!-- 1 ряд: Лейблы (выровнены по левому краю) -->
+      <!-- 1 ряд: Лейблы -->
       <div class="text-[10px] font-medium text-[var(--muted-foreground)] uppercase tracking-wide truncate pl-1">
         Валюта 1
       </div>
